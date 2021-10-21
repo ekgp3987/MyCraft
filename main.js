@@ -183,7 +183,8 @@ function main() {
   for (let y = 0; y < cellSize; ++y) {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
-        const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
+        let height = 3;
+        // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
           world.setVoxel(x, y, z, 1);
         }
