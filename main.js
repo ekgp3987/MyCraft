@@ -540,15 +540,14 @@ function main() {
     texture = loader.load(src="flourish-cc-by-nc-sa".concat(i,".png"));
     texture.magFilter = THREE.NearestFilter;
     texture.minFilter = THREE.NearestFilter;
-
     material = new THREE.MeshLambertMaterial({
       map: texture,
       side: THREE.DoubleSide,
       alphaTest: 0.1,
       transparent: true,
     });
-
     updateVoxelGeometry(0,0,0);
+    requestRenderIfNotRequested();
     
   }
 
