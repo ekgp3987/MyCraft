@@ -79,6 +79,7 @@
 				RIGHT: 'ArrowRight',
 				BOTTOM: 'ArrowDown'
 			}; // Mouse buttons
+
 			this.mouseButtons = {
 				LEFT: THREE.MOUSE.ROTATE,
 				MIDDLE: THREE.MOUSE.DOLLY,
