@@ -1,6 +1,8 @@
 // import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 // import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 
+let i =0;
+
 class VoxelWorld {
   constructor(options) {
     this.cellSize = options.cellSize;
@@ -293,7 +295,7 @@ function main() {
 
   // bring textuers
   const loader = new THREE.TextureLoader();
-  const texture = loader.load(src="flourish-cc-by-nc-sa-edit.png"); //직접 지정
+  let texture = loader.load(src="flourish-cc-by-nc-sa0.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
@@ -313,7 +315,7 @@ function main() {
 
   // const {positions, normals, uvs, indices} = world.generateGeometryDataForCell(0, 0, 0);
   // const geometry = new THREE.BufferGeometry();
-  const material = new THREE.MeshLambertMaterial({
+  let material = new THREE.MeshLambertMaterial({
     map: texture,
     side: THREE.DoubleSide,
     alphaTest: 0.1,
@@ -339,13 +341,13 @@ function main() {
     geometry.setIndex(indices);
     geometry.computeBoundingSphere();
 
-    if (!mesh) {
+    // if (!mesh) {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
       scene.add(mesh);
       mesh.position.set(cellX * cellSize, cellY * cellSize, cellZ * cellSize);
-    }
+    // }
   }
 
   const neighborOffsets = [
@@ -505,31 +507,55 @@ function main() {
       requestAnimationFrame(render);
     }
   }
+  var button1 =  document.getElementById("btn1");
+  button1.addEventListener('click', back);
+  var button2 =  document.getElementById("btn2");
+  button2.addEventListener('click', forth);
+
+  function back(){
+    i = Math.abs(--i)%3;
+    console.log(i+"??");
+    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+    var ui = document.getElementById("ui")
+    var tiles = ui.querySelectorAll("input[type=radio] + label")
+    for(var j = 0; j<16; j++){
+      tiles[j].style.backgroundImage = url;
+    }   
+    textureChange();
+  }
+  function forth(){
+    i = Math.abs(++i)%3;
+    console.log(i+"?");
+    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+    var ui = document.getElementById("ui")
+    var tiles = ui.querySelectorAll("input[type=radio] + label")
+    for(var j = 0; j<16; j++){
+      tiles[j].style.backgroundImage = url;
+ 
+    }
+    textureChange();
+  }
+
+  function textureChange(){
+    texture = loader.load(src="flourish-cc-by-nc-sa".concat(i,".png"));
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
+
+    material = new THREE.MeshLambertMaterial({
+      map: texture,
+      side: THREE.DoubleSide,
+      alphaTest: 0.1,
+      transparent: true,
+    });
+
+    updateVoxelGeometry(0,0,0);
+    
+  }
 
   controls.addEventListener('change', requestRenderIfNotRequested);
   window.addEventListener('resize', requestRenderIfNotRequested);
 }
 
 main();
-let i =0;
- function back(){
-   i = Math.abs(--i)%3;
-   var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
-   console.log(i);
-   var ui = document.getElementById("ui")
-   var tiles = ui.querySelectorAll("input[type=radio] + label")
-   for(var j = 0; j<16; j++){
-     tiles[j].style.backgroundImage = url;
-   }    
- }
- function forth(){
-   i = Math.abs(++i)%3;
-   var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
-   var ui = document.getElementById("ui")
-   var tiles = ui.querySelectorAll("input[type=radio] + label")
-   for(var j = 0; j<16; j++){
-     tiles[j].style.backgroundImage = url;
 
-   }     
- }
 
