@@ -17,10 +17,10 @@ class VoxelWorld {
     const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
     const voxelZ = THREE.MathUtils.euclideanModulo(z, cellSize) | 0;
     return voxelY * cellSliceSize +
-           voxelZ * cellSize +
-           voxelX;
+      voxelZ * cellSize +
+      voxelX;
   }
-  computeCellId(x, y, z) {
+  getCellForVoxel(x, y, z) {
     const { cellSize } = this;
     const cellX = Math.floor(x / cellSize);
     const cellY = Math.floor(y / cellSize);
@@ -257,6 +257,66 @@ VoxelWorld.faces = [
       { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
       { pos: [ 0, 1, 1 ], uv: [ 0, 1 ], },
       { pos: [ 1, 1, 1 ], uv: [ 1, 1 ], },
+// =======
+//       indices,
+//     };
+//   }
+// }
+
+// VoxelWorld.faces = [
+//   { // left
+//     dir: [-1, 0, 0,],
+//     corners: [
+//       [0, 1, 0],
+//       [0, 0, 0],
+//       [0, 1, 1],
+//       [0, 0, 1],
+//     ],
+//   },
+//   { // right
+//     dir: [1, 0, 0,],
+//     corners: [
+//       [1, 1, 1],
+//       [1, 0, 1],
+//       [1, 1, 0],
+//       [1, 0, 0],
+//     ],
+//   },
+//   { // bottom
+//     dir: [0, -1, 0,],
+//     corners: [
+//       [1, 0, 1],
+//       [0, 0, 1],
+//       [1, 0, 0],
+//       [0, 0, 0],
+//     ],
+//   },
+//   { // top
+//     dir: [0, 1, 0,],
+//     corners: [
+//       [0, 1, 1],
+//       [1, 1, 1],
+//       [0, 1, 0],
+//       [1, 1, 0],
+//     ],
+//   },
+//   { // back
+//     dir: [0, 0, -1,],
+//     corners: [
+//       [1, 0, 0],
+//       [0, 0, 0],
+//       [1, 1, 0],
+//       [0, 1, 0],
+//     ],
+//   },
+//   { // front
+//     dir: [0, 0, 1,],
+//     corners: [
+//       [0, 0, 1],
+//       [1, 0, 1],
+//       [0, 1, 1],
+//       [1, 1, 1],
+// >>>>>>> kimdahye
     ],
   },
 ];
@@ -274,12 +334,132 @@ function main() {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
   camera.position.set(-cellSize * .3, cellSize * .8, -cellSize * .3);
 
-  const controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
-  controls.update();
+  // camera: orbitcontrol
+  // const controls = new THREE.OrbitControls(camera, canvas);
+  // controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
+  // controls.update();
 
+  // const scene = new THREE.Scene();
+  // scene.background = new THREE.Color('skyblue');
+
+  // camera: flycontrol 사용
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('skyblue');
+  scene.background = new THREE.Color('lightblue');
+
+  camera.position.set(cellSize / 2, cellSize / 3, cellSize / 2+40); //이렇게 해야 도형보임(조정)
+  
+
+  //camera 방법 1. threejs controls 를 사용한다.
+  // 2. 이벤트로 keycode받아서 카메라의 위치변환(뭔가 잘안된다...) 
+  
+  //변경하려는 FlyControls 코드 (작동x)
+  const controls = new THREE.FlyControls(camera, canvas); //카메라 control
+    controls.movementSpeed = 20;
+    controls.rollSpeed = 0.01;
+    controls.autoForward = true;
+    controls.dragToLook = true;
+  /* */
+
+  /*
+  //기존의 OrbitControls 코드 
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2); //기존 카메라 위치
+  controls.update();
+  /* */
+
+  const clock = new THREE.Clock(true) //controls.update(delta) 를 위한 변수.
+
+
+
+
+
+  function addLight(x, y, z) {
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(x, y, z);
+    scene.add(light);
+  }
+  addLight(-1, 2, 4);
+  addLight(1, -1, -2);
+
+  const world = new VoxelWorld(cellSize);
+
+  for (let y = 0; y < cellSize; ++y) {
+    for (let z = 0; z < cellSize; ++z) {
+      for (let x = 0; x < cellSize; ++x) {
+        let height = 3;
+        // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
+        if (y < height) {
+          world.setVoxel(x, y, z, 1);
+        }
+      }
+    }
+  }
+
+  const { positions, normals, indices } = world.generateGeometryDataForCell(0, 0, 0);
+  const geometry = new THREE.BufferGeometry();
+  const material = new THREE.MeshLambertMaterial({ color: 'green' });
+
+  const positionNumComponents = 3;
+  const normalNumComponents = 3;
+  geometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
+  geometry.setAttribute(
+    'normal',
+    new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
+  geometry.setIndex(indices);
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+    return needResize;
+  }
+
+  let renderRequested = false;
+
+  function render() {
+
+    var delta = clock.getDelta();  //controls.update(delta)에 사용변수.
+    renderRequested = undefined;
+
+    if (resizeRendererToDisplaySize(renderer)) {
+      const canvas = renderer.domElement;
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+
+    //renderer.clear();
+    //controls.update();  //orbitControls 용
+    controls.update(delta); //delta
+
+
+    renderer.render(scene, camera);
+  }
+  render();
+
+  function requestRenderIfNotRequested() {
+    if (!renderRequested) {
+      renderRequested = true;
+      
+      requestAnimationFrame(render);
+
+    }
+  }
+
+
+  controls.addEventListener('change', requestRenderIfNotRequested); //orbitControls 용
+  window.addEventListener('resize', requestRenderIfNotRequested);
+
+
 
   function addLight(x, y, z) {
     const color = 0xFFFFFF;
