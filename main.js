@@ -279,7 +279,7 @@ function main() {
   controls.update();
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('lightblue');
+  scene.background = new THREE.Color('skyblue');
 
   function addLight(x, y, z) {
     const color = 0xFFFFFF;
@@ -291,8 +291,25 @@ function main() {
   addLight(-1,  2,  4);
   addLight( 1, -1, -2);
 
-  /*  bring textuers */
+  /*background*/
+  function createClouds(radius, segments) {
+    // Mesh
+    return new THREE.Mesh(
+        // geometry
+        new THREE.SphereGeometry(radius, segments, segments),
+        // material
+        new THREE.MeshBasicMaterial({
+            map:    THREE.ImageUtils.loadTexture('images/fair_clouds_4k.png'),
+            side:   THREE.BackSide,
+            transparent:    true
+        })
+    );
+  }
+  var clouds = createClouds(80, 64);  // create big sphere
+  scene.add(clouds);
 
+  // bring textuers
+  /*  bring textuers */  
   const loader = new THREE.TextureLoader();
   let texture = loader.load(src="textures/my-texture2.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
