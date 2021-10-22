@@ -5,7 +5,7 @@ class VoxelWorld {
   constructor(cellSize) {
     this.cellSize = cellSize;
     this.cellSliceSize = cellSize * cellSize;
-    this.cell = new Uint8Array(cellSize * cellSize * cellSize);
+    this.cells = {};
   }
   computeVoxelOffset(x, y, z) {
     const { cellSize, cellSliceSize } = this;
@@ -16,23 +16,34 @@ class VoxelWorld {
       voxelZ * cellSize +
       voxelX;
   }
-  getCellForVoxel(x, y, z) {
+  computeCellId(x, y, z) {
     const { cellSize } = this;
     const cellX = Math.floor(x / cellSize);
     const cellY = Math.floor(y / cellSize);
     const cellZ = Math.floor(z / cellSize);
-    if (cellX !== 0 || cellY !== 0 || cellZ !== 0) {
-      return null;
-    }
-    return this.cell;
+    return `${cellX},${cellY},${cellZ}`;
+  }
+
+  getCellForVoxel(x, y, z) {
+    return this.cells[this.computeCellId(x, y, z)];
   }
   setVoxel(x, y, z, v) {
-    const cell = this.getCellForVoxel(x, y, z);
+    let cell = this.getCellForVoxel(x, y, z);
     if (!cell) {
-      return;  // TODO: add a new cell?
+      cell = this.addCellForVoxel(x, y, z); 
     }
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
+  }
+  addCellForVoxel(x, y, z){
+    const cellId = this.computeCellId(x, y, z);
+    let cell = this.cells[cellId];
+    if(!cell){
+      const {cellSize} = this;
+      cell = new Uint8Array(cellSize * cellSize * cellSize);
+      this.cells[cellId] = cell;
+    }
+    return cell;
   }
   getVoxel(x, y, z) {
     const cell = this.getCellForVoxel(x, y, z);
@@ -184,7 +195,7 @@ function main() {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
         let height = 3;
-        // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
+        //const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
           world.setVoxel(x, y, z, 1);
         }
@@ -219,6 +230,21 @@ function main() {
     return needResize;
   }
 
+  function getCanvasRelativePosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * canvas.width  / rect.width,
+      y: (event.clientY - rect.top ) * canvas.height / rect.height,
+    };
+  }
+  
+  function placeVoxel(event) {
+    const pos = getCanvasRelativePosition(event);
+    const x = (pos.x / canvas.width ) *  2 - 1;
+    const y = (pos.y / canvas.height) * -2 + 1;
+    console.log(x,y);
+    }
+
   let renderRequested = false;
 
   function render() {
@@ -235,6 +261,24 @@ function main() {
   }
   render();
 
+  let currentVoxel = 0;
+  let currentId;
+  
+  document.querySelectorAll('#ui .tiles input[type=radio][name=voxel]').forEach((elem) => {
+    elem.addEventListener('click', allowUncheck);
+  });
+  
+  function allowUncheck() {
+    if (this.id === currentId) {
+      this.checked = false;
+      currentId = undefined;
+      currentVoxel = 0;
+    } else {
+      currentId = this.id;
+      currentVoxel = parseInt(this.value);
+    }
+  }
+
   function requestRenderIfNotRequested() {
     if (!renderRequested) {
       renderRequested = true;
@@ -242,8 +286,6 @@ function main() {
     }
   }
 
-  controls.addEventListener('change', requestRenderIfNotRequested);
-  window.addEventListener('resize', requestRenderIfNotRequested);
 }
 
 main();
