@@ -23,23 +23,22 @@ class VoxelWorld {
     const cellZ = Math.floor(z / cellSize);
     return `${cellX},${cellY},${cellZ}`;
   }
-
   getCellForVoxel(x, y, z) {
     return this.cells[this.computeCellId(x, y, z)];
   }
   setVoxel(x, y, z, v) {
     let cell = this.getCellForVoxel(x, y, z);
     if (!cell) {
-      cell = this.addCellForVoxel(x, y, z); 
+      cell = this.addCellForVoxel(x, y, z);
     }
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
   }
-  addCellForVoxel(x, y, z){
+  addCellForVoxel(x, y, z) {
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
-    if(!cell){
-      const {cellSize} = this;
+    if (!cell) {
+      const { cellSize } = this;
       cell = new Uint8Array(cellSize * cellSize * cellSize);
       this.cells[cellId] = cell;
     }
@@ -195,7 +194,7 @@ function main() {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
         let height = 3;
-        //const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
+        // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
           world.setVoxel(x, y, z, 1);
         }
@@ -229,21 +228,6 @@ function main() {
     }
     return needResize;
   }
-
-  function getCanvasRelativePosition(event) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (event.clientX - rect.left) * canvas.width  / rect.width,
-      y: (event.clientY - rect.top ) * canvas.height / rect.height,
-    };
-  }
-  
-  function placeVoxel(event) {
-    const pos = getCanvasRelativePosition(event);
-    const x = (pos.x / canvas.width ) *  2 - 1;
-    const y = (pos.y / canvas.height) * -2 + 1;
-    console.log(x,y);
-    }
 
   let renderRequested = false;
 
@@ -286,6 +270,8 @@ function main() {
     }
   }
 
+  controls.addEventListener('change', requestRenderIfNotRequested);
+  window.addEventListener('resize', requestRenderIfNotRequested);
 }
 
 main();
