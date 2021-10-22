@@ -299,7 +299,7 @@ function main() {
   texture.minFilter = THREE.NearestFilter;
 
   const tileSize = 1024;
-  const tileTextureWidth = 17408;
+  const tileTextureWidth = 16384;
   const tileTextureHeight = 4096;
   const world = new VoxelWorld({
     cellSize,
