@@ -102,9 +102,9 @@ class VoxelWorld {
   }
 }
 
-/* texture */
 
-// texture atlas setting
+/*  texture atlas setting */
+
 VoxelWorld.faces = [
   { // left
     uvRow: 0,
@@ -172,7 +172,7 @@ function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
 
-  const cellSize = 32;
+  const cellSize = 50;
 
   const fov = 75;
   const aspect = 2;  // the canvas default
@@ -198,15 +198,16 @@ function main() {
   addLight(-1,  2,  4);
   addLight( 1, -1, -2);
 
-  // bring textuers
+  /*  bring textuers */
+
   const loader = new THREE.TextureLoader();
-  const texture = loader.load(src="flourish-cc-by-nc-sa-edit.png"); //직접 지정
+  let texture = loader.load(src="textures/my-texture2.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
-  const tileSize = 16;
-  const tileTextureWidth = 256;
-  const tileTextureHeight = 64;
+  const tileSize = 1024;
+  const tileTextureWidth = 17408;
+  const tileTextureHeight = 4096;
   const world = new VoxelWorld({
     cellSize,
     tileSize,
@@ -220,16 +221,24 @@ function main() {
         let height = 3;
         // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
-          // world.setVoxel(x, y, z, randInt(1, 17));
-          world.setVoxel(x, y, z, 1);
+          world.setVoxel(x, y, z, randInt(1, 18));
+          // world.setVoxel(x, y, z, 1); //마지막 숫자번째 texture 사용
+          // texture = loader.load(src="textures/marble_01_1k.png"); //직접 지정
         }
+        // else if(y==height){
+        //   // world.setVoxel(x, y, z, 1); //1번째 texture 사용
+        //   texture = loader.load(src="textures/brick_wall_001_1k.png"); //직접 지정
+        // }
+        // world.setVoxel(x, y, z, 1); //1번째 texture 사용
+        
+        
       }
     }
   }
 
-  // function randInt(min, max) {
-  //   return Math.floor(Math.random() * (max - min) + min);
-  // }
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
 
   const {positions, normals, uvs, indices} = world.generateGeometryDataForCell(0, 0, 0);
   const geometry = new THREE.BufferGeometry();
