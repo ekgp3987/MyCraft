@@ -32,8 +32,7 @@ height: 0;
 display: none;
 }
 #ui input[type=radio] + label {
-background-image: url('flourish-cc-by-nc-sa.png');
-/* background-color: green; */
+background-image: url('flourish-cc-by-nc-sa0.png');
 background-size: 1600% 400%;
 image-rendering: pixelated;
 width: 64px;

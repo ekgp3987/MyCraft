@@ -511,3 +511,25 @@ function main() {
 }
 
 main();
+let i =0;
+ function back(){
+   i = Math.abs(--i)%3;
+   var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+   console.log(i);
+   var ui = document.getElementById("ui")
+   var tiles = ui.querySelectorAll("input[type=radio] + label")
+   for(var j = 0; j<16; j++){
+     tiles[j].style.backgroundImage = url;
+   }    
+ }
+ function forth(){
+   i = Math.abs(++i)%3;
+   var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+   var ui = document.getElementById("ui")
+   var tiles = ui.querySelectorAll("input[type=radio] + label")
+   for(var j = 0; j<16; j++){
+     tiles[j].style.backgroundImage = url;
+
+   }     
+ }
+
