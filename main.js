@@ -275,42 +275,20 @@ function main() {
   const near = 0.1;
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
+  //camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
+  /* //orbitcontrol
   const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
   controls.update();
+  */
 
-  //keyboard action
-  window.addEventListener("keydown", (e) => {
-    if ( e.code =='KeyT'){
-      camera.position.set(0,0,0);
-      //camera.position.applyEuler(0,0,0);      
-      requestAnimationFrame(render);
-    }
-    if ( e.code =='KeyE'){
-      console.log(camera.position);
-      console.log(camera.rotation);     
-    }
-    if ( e.code =='KeyS'){
-      const t = new THREE.Vector3(1,0,0);
-      camera.position.set(camera.position.x-1,camera.position.y,camera.position.z);      
-      requestAnimationFrame(render);          
-    }
-    if ( e.code =='KeyW'){
-      camera.position.set(camera.position.x+1,camera.position.y,camera.position.z);    
-      requestAnimationFrame(render);          
-    }
-    if ( e.code =='KeyA'){
-      camera.position.set(camera.position.x,camera.position.y,camera.position.z+1);    
-      requestAnimationFrame(render);          
-    }
-    if ( e.code =='KeyD'){
-      camera.position.set(camera.position.x,camera.position.y,camera.position.z-1);    
-      requestAnimationFrame(render);          
-    }   
-  });
-
+  camera.position.set(25, 15, 80);//시작 좌표
+  const controls = new THREE.FlyControls(camera, canvas);
+  controls.movementSpeed = 0.1;
+  controls.autoForward = false;
+  controls.dragToLook = true;
+  controls.update(1);
 
 
   const scene = new THREE.Scene();
@@ -540,15 +518,17 @@ function main() {
   let renderRequested = false;
 
   function render() {
-    renderRequested = undefined;
-
+    //renderRequested = undefined;
+    renderRequested = false
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
 
-    controls.update();
+    //controls.update();
+    controls.update(1);
+    requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
   render();
@@ -725,8 +705,8 @@ function main() {
     }
   }
 
-  controls.addEventListener('change', requestRenderIfNotRequested);
-  window.addEventListener('resize', requestRenderIfNotRequested);
+  //controls.addEventListener('change', requestRenderIfNotRequested);
+  //window.addEventListener('resize', requestRenderIfNotRequested);
 }
 
 main();
