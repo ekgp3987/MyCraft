@@ -499,7 +499,14 @@ function main() {
       y: (event.clientY - rect.top ) * canvas.height / rect.height,
     };
   }
-   
+  
+  let placeVoxelCount = 0;
+  let userlevel = 0;
+  const levelWeight = 0.1;
+  const level = document.querySelector("#levelText");
+  level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+
+
   function placeVoxel(event) {
     const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width ) *  2 - 1;
@@ -536,7 +543,28 @@ function main() {
         world.setVoxel(...pos, voxelId);
         updateVoxelGeometry(...pos);
         requestRenderIfNotRequested();
+
+
+
+         // 레벨 관련 부분
+         if(voxelId!=0){ // 블럭 생성시만
+       
+          placeVoxelCount += levelWeight;
+          console.log("placeVoxelCount:", placeVoxelCount);
+          placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
+          if(placeVoxelCount % 1 == 0){
+            // userlevel += 1;
+            levelup();
+          }
+        }
+
+        
       }
+
+
+       
+
+        
     }
   }
 
@@ -547,6 +575,34 @@ function main() {
     y: 0,
   };
    
+
+
+  function levelup(){
+    userlevel += 1;
+    console.log("user level up!! current level:", userlevel);
+    level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+    moveProgress();
+    
+
+  }
+
+  function moveProgress(){
+    var ele=document.getElementById('progressing');
+    var width = 5;
+        if(width>=100){
+            width = 0;
+        }else{
+            width = width + levelWeight*100;
+            ele.style.width=width+"%";
+            ele.innerHTML=width+"%";
+        } 
+}
+  
+
+
+
+
+  
   function recordStartPosition(event) {
     mouse.x = event.clientX;
     mouse.y = event.clientY;

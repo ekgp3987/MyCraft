@@ -55,3 +55,47 @@ outline: 3px solid red;
   height: 32px;
 }
 }
+
+
+
+.info {
+  position: absolute;
+  width: 20%;
+  margin-top: 1%;;
+  margin-left: 1%;;
+  margin-right: 10%;
+  background: rgba(0, 0, 0, 0.8);
+  
+}
+.info:after{
+  content:"";
+  display: block;
+  padding-top: 66.66%;
+}
+.content{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.levelContainer{
+  margin: 10%;
+}
+
+#levelText{
+  color: white;
+}
+
+
+#progressBar{
+  width: 100%;
+  background: rgb(51, 48, 48);
+}
+#progsNum{
+  width: 10%;
+  height: 10%;
+  background: rgb(240, 234, 149);
+  color:black;
+  text-align: center;
+  line-height: 50px;
+}
