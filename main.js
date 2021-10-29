@@ -490,7 +490,6 @@ function main() {
         isRightButton = event.button == 2; 
 
       const voxelId = isRightButton ? currentVoxel : 0;
-      console.log(voxelId);
       /**
        * 교차점은 면 위에 있습니다. 이는 수학적 오차로 인해 교차점이 면의 양면
        * 어디로 떨어질지 모른다는 이야기죠.
