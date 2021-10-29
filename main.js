@@ -1,5 +1,6 @@
 // import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 // import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+// import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 
 class VoxelWorld {
   constructor(options) {
@@ -264,15 +265,17 @@ VoxelWorld.faces = [
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
+  // shadow rendering call
+  renderer.shadowMap.enabled = true;
 
   const cellSize = 50;
 
-  const fov = 75;
+  const fov = 45;
   const aspect = 2;  // the canvas default
   const near = 0.1;
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(-cellSize * .3, cellSize * .8, -cellSize * .3);
+  camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
   const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
@@ -313,17 +316,86 @@ function main() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('skyblue');
 
+  /* AmbientLight 자연광 */
+  const color = 0xFFFFFF;
+  var intensity = 0.5;
+  var light = new THREE.AmbientLight(color, intensity);
+  scene.add(light);
+ 
   function addLight(x, y, z) {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
+    // const color = 0xFFFFFF;
+    intensity = 0.5;
+    light = new THREE.DirectionalLight(color, intensity);
+    // shadow & shadow camera setting
+    light.castShadow = true;
+    light.shadow.bias = -0.01;  // 줄무늬 안생기게
+    light.shadowDarkness = 0.5;
+    light.shadowCameraNear = 2;
+    light.shadowCameraFar = 70;
+    light.shadowCameraLeft = -30;
+    light.shadowCameraRight = 30;
+    light.shadowCameraTop = 30;
+    light.shadowCameraBottom = -30;
     light.position.set(x, y, z);
-    scene.add(light);
-  }
-  addLight(-1,  2,  4);
-  addLight( 1, -1, -2);
+    // 빛이 비추는 방향 target
+    light.target.position.set(25, 0, 25);
+    scene.add(light, light.target);
 
-  /*background*/
+    /* 빛 위치를 표시해줌 */
+    const helper = new THREE.DirectionalLightHelper(light);
+    scene.add(helper);
+
+    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+    scene.add(cameraHelper);
+  }
+  // 빛의 시작 지점
+  addLight(50, 30, 25);
+  // addLight( 1, -1, -2);
+
+  function updateLight() {
+    light.target.updateMatrixWorld();
+    helper.update();
+  }
+  
+  /* slider 관련 코드 -- 실행 X
+
+  var setx = document.getElementById("setx");
+  setx.addEventListener("input", moveX);
+
+  function moveX()
+  
+  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
+  class ColorGUIHelper {
+    constructor(object, prop) {
+      this.object = object;
+      this.prop = prop;
+    }
+    get value() {
+      return `#${this.object[this.prop].getHexString()}`;
+    }
+    set value(hexString) {
+      this.object[this.prop].set(hexString);
+    }
+  }
+
+  function makeXYZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
+    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
+    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
+    folder.open();
+  }
+
+  const gui = new dat.GUI();
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  
+  gui.add(light, 'intensity', 0, 2, 0.01);
+  gui.add(light, 'distance', 0, 40).onChange(updateLight);
+   
+  makeXYZGUI(gui, light.position, 'position', updateLight);
+  */
+
+  /* 배경에 구름 */
   function createClouds(radius, segments) {
     // Mesh
     return new THREE.Mesh(
@@ -337,7 +409,11 @@ function main() {
         })
     );
   }
-  var clouds = createClouds(80, 64);  // create big sphere
+  
+  /* 큰 구 생성 */
+  var clouds = createClouds(80, 64); 
+  /* 구 위치 조정 */
+  clouds.position.set( 25, 20, 30 );
   scene.add(clouds);
 
   // bring textuers
@@ -393,6 +469,9 @@ function main() {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
+      // object위에 그림자를 드리우게 하는 것 
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
       scene.add(mesh);
       mesh.position.set(cellX * cellSize, cellY * cellSize, cellZ * cellSize);
     }
