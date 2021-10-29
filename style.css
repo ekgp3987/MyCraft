@@ -56,26 +56,17 @@ outline: 3px solid red;
 }
 }
 
-
-
 .info {
   position: absolute;
-  width: 20%;
+  width: 40vh;
   margin-top: 1%;;
   margin-left: 1%;;
   margin-right: 10%;
   background: rgba(0, 0, 0, 0.8);
-  
 }
 .info:after{
-  content:"";
   display: block;
   padding-top: 66.66%;
-}
-.content{
-  position: absolute;
-  width: 100%;
-  height: 100%;
 }
 
 .levelContainer{
@@ -83,10 +74,9 @@ outline: 3px solid red;
 }
 
 #levelText{
-  
+  font-size: 4vh;
   color: white;
 }
-
 
 #progressBar{
   width: 100%;
