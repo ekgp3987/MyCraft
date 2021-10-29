@@ -395,7 +395,7 @@ function main() {
         let height = 3;
         // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
-          world.setVoxel(x, y, z, randInt(1, 18));
+          world.setVoxel(x, y, z, 1);
           // world.setVoxel(x, y, z, 1); //마지막 숫자번째 texture 사용
           // texture = loader.load(src="textures/marble_01_1k.png"); //직접 지정
         }
@@ -480,7 +480,17 @@ function main() {
    
     const intersection = world.intersectRay(start, end);
     if (intersection) {
-      const voxelId = event.shiftKey ? 0 : currentVoxel;
+
+      var isRightButton;
+      event = event || window.event;
+
+      if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        isRightButton = event.which == 3; 
+      else if ("button" in event)  // IE, Opera 
+        isRightButton = event.button == 2; 
+
+      const voxelId = isRightButton ? currentVoxel : 0;
+      console.log(voxelId);
       /**
        * 교차점은 면 위에 있습니다. 이는 수학적 오차로 인해 교차점이 면의 양면
        * 어디로 떨어질지 모른다는 이야기죠.
