@@ -581,6 +581,7 @@ function main() {
   
   let placeVoxelCount = 0;
   let userlevel = 0;
+  let width = 0;
   const levelWeight = 0.1;
   const level = document.querySelector("#levelText");
   level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
@@ -631,9 +632,11 @@ function main() {
           placeVoxelCount += levelWeight;
           console.log("placeVoxelCount:", placeVoxelCount);
           placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
+          moveProgress();
           if(placeVoxelCount % 1 == 0){
             // userlevel += 1;
             levelup();
+           
           }
         }
 
@@ -660,21 +663,26 @@ function main() {
     userlevel += 1;
     console.log("user level up!! current level:", userlevel);
     level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
-    moveProgress();
+    
     
 
   }
 
   function moveProgress(){
-    var ele=document.getElementById('progressing');
-    var width = 5;
-        if(width>=100){
+    const ele=document.getElementById('progsNum');
+
+    
+        if(width>=90){
             width = 0;
+            ele.style.width=width+"%";
+            ele.innerHTML=width+"%";
         }else{
             width = width + levelWeight*100;
             ele.style.width=width+"%";
             ele.innerHTML=width+"%";
         } 
+
+      console.log('width:', width);
 }
   
 

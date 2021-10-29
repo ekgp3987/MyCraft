@@ -83,6 +83,7 @@ outline: 3px solid red;
 }
 
 #levelText{
+  
   color: white;
 }
 
@@ -92,7 +93,7 @@ outline: 3px solid red;
   background: rgb(51, 48, 48);
 }
 #progsNum{
-  width: 10%;
+  width: 0%;
   height: 10%;
   background: rgb(240, 234, 149);
   color:black;
