@@ -531,11 +531,16 @@ function main() {
       const pos = intersection.position.map((v, ndx) => {
         return v + intersection.normal[ndx] * (voxelId > 0 ? 0.5 : -0.5);
       });
-      world.setVoxel(...pos, voxelId);
-      updateVoxelGeometry(...pos);
-      requestRenderIfNotRequested();
+      //범위 벗어나면 생성 못함
+      if((pos[0] > 0 && pos[0] < 50) && (pos[2] > 0 && pos[2] < 50)){
+        world.setVoxel(...pos, voxelId);
+        updateVoxelGeometry(...pos);
+        requestRenderIfNotRequested();
+      }
     }
   }
+
+  
    
   const mouse = {
     x: 0,
