@@ -265,6 +265,7 @@ VoxelWorld.faces = [
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
+  // shadow rendering call
   renderer.shadowMap.enabled = true;
 
   const cellSize = 50;
@@ -285,23 +286,28 @@ function main() {
 
   /* AmbientLight 자연광 */
   const color = 0xFFFFFF;
-  var intensity = 0.3;
+  var intensity = 0.5;
   var light = new THREE.AmbientLight(color, intensity);
   scene.add(light);
  
-  function addLight(x, y, z, a, b, c) {
+  function addLight(x, y, z) {
     // const color = 0xFFFFFF;
-    intensity = 1;
+    intensity = 0.5;
     light = new THREE.DirectionalLight(color, intensity);
+    // shadow & shadow camera setting
     light.castShadow = true;
-    // light.shadow.mapSize.width = canvas.width;
-    // light.shadow.mapSize.height = canvas.height;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 200;
-    // light.shadow.camera.fov = 1000;
+    light.shadow.bias = -0.01;  // 줄무늬 안생기게
+    light.shadowDarkness = 0.5;
+    light.shadowCameraNear = 2;
+    light.shadowCameraFar = 70;
+    light.shadowCameraLeft = -30;
+    light.shadowCameraRight = 30;
+    light.shadowCameraTop = 30;
+    light.shadowCameraBottom = -30;
     light.position.set(x, y, z);
-    light.target.position.set(a, b, c);
-    scene.add(light);
+    // 빛이 비추는 방향 target
+    light.target.position.set(25, 0, 25);
+    scene.add(light, light.target);
 
     /* 빛 위치를 표시해줌 */
     const helper = new THREE.DirectionalLightHelper(light);
@@ -310,7 +316,8 @@ function main() {
     const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
     scene.add(cameraHelper);
   }
-  addLight(30, 30, 30, 0, 500 ,0);
+  // 빛의 시작 지점
+  addLight(50, 30, 25);
   // addLight( 1, -1, -2);
 
   function updateLight() {
@@ -430,6 +437,7 @@ function main() {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
+      // object위에 그림자를 드리우게 하는 것 
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       scene.add(mesh);
