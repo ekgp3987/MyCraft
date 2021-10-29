@@ -1,5 +1,6 @@
 // import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 // import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+// import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 
 class VoxelWorld {
   constructor(options) {
@@ -264,6 +265,7 @@ VoxelWorld.faces = [
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
+  renderer.shadowMap.enabled = true;
 
   const cellSize = 50;
 
@@ -286,22 +288,57 @@ function main() {
   var intensity = 0.3;
   var light = new THREE.AmbientLight(color, intensity);
   scene.add(light);
-
-  function addLight(x, y, z) {
+ 
+  function addLight(x, y, z, a, b, c) {
     // const color = 0xFFFFFF;
     intensity = 1;
-    light = new THREE.PointLight(color, intensity);
+    light = new THREE.DirectionalLight(color, intensity);
+    light.castShadow = true;
+    // light.shadow.mapSize.width = canvas.width;
+    // light.shadow.mapSize.height = canvas.height;
+    // light.shadow.camera.near = 0.5;
+    // light.shadow.camera.far = 200;
+    // light.shadow.camera.fov = 1000;
     light.position.set(x, y, z);
+    light.target.position.set(a, b, c);
     scene.add(light);
 
     /* 빛 위치를 표시해줌 */
-    const helper = new THREE.PointLightHelper(light);
+    const helper = new THREE.DirectionalLightHelper(light);
     scene.add(helper);
+
+    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+    scene.add(cameraHelper);
   }
-  addLight(-10,  30,  40);
+  addLight(30, 30, 30, 0, 500 ,0);
   // addLight( 1, -1, -2);
 
-  /* 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기
+  function updateLight() {
+    light.target.updateMatrixWorld();
+    helper.update();
+  }
+  
+  /* slider 관련 코드 -- 실행 X
+
+  var setx = document.getElementById("setx");
+  setx.addEventListener("input", moveX);
+
+  function moveX()
+  
+  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
+  class ColorGUIHelper {
+    constructor(object, prop) {
+      this.object = object;
+      this.prop = prop;
+    }
+    get value() {
+      return `#${this.object[this.prop].getHexString()}`;
+    }
+    set value(hexString) {
+      this.object[this.prop].set(hexString);
+    }
+  }
+
   function makeXYZGUI(gui, vector3, name, onChangeFn) {
     const folder = gui.addFolder(name);
     folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
@@ -310,18 +347,13 @@ function main() {
     folder.open();
   }
 
-  function updateLight() {
-    light.target.updateMatrixWorld();
-    helper.update();
-  }
-  updateLight();
-   
-  const gui = new GUI();
+  const gui = new dat.GUI();
   gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  
   gui.add(light, 'intensity', 0, 2, 0.01);
+  gui.add(light, 'distance', 0, 40).onChange(updateLight);
    
   makeXYZGUI(gui, light.position, 'position', updateLight);
-  makeXYZGUI(gui, light.target.position, 'target', updateLight);
   */
 
   /* 배경에 구름 */
@@ -398,6 +430,8 @@ function main() {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
       scene.add(mesh);
       mesh.position.set(cellX * cellSize, cellY * cellSize, cellZ * cellSize);
     }
