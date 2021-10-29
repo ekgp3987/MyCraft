@@ -278,6 +278,38 @@ function main() {
   controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
   controls.update();
 
+  //keyboard action
+  window.addEventListener("keydown", (e) => {
+    if ( e.code =='KeyT'){
+      camera.position.set(0,0,0);
+      //camera.position.applyEuler(0,0,0);      
+      requestAnimationFrame(render);
+    }
+    if ( e.code =='KeyE'){
+      console.log(camera.position);
+      console.log(camera.rotation);     
+    }
+    if ( e.code =='KeyS'){
+      const t = new THREE.Vector3(1,0,0);
+      camera.position.set(camera.position.x-1,camera.position.y,camera.position.z);      
+      requestAnimationFrame(render);          
+    }
+    if ( e.code =='KeyW'){
+      camera.position.set(camera.position.x+1,camera.position.y,camera.position.z);    
+      requestAnimationFrame(render);          
+    }
+    if ( e.code =='KeyA'){
+      camera.position.set(camera.position.x,camera.position.y,camera.position.z+1);    
+      requestAnimationFrame(render);          
+    }
+    if ( e.code =='KeyD'){
+      camera.position.set(camera.position.x,camera.position.y,camera.position.z-1);    
+      requestAnimationFrame(render);          
+    }   
+  });
+
+
+
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('skyblue');
 
