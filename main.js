@@ -369,7 +369,7 @@ function main() {
   
   gui.add(light, 'intensity', 0, 2, 0.01);
   gui.add(light, 'distance', 0, 40).onChange(updateLight);
-   
+  
   makeXYZGUI(gui, light.position, 'position', updateLight);
   */
 
@@ -381,7 +381,7 @@ function main() {
         new THREE.SphereGeometry(radius, segments, segments),
         // material
         new THREE.MeshBasicMaterial({
-            map:    THREE.ImageUtils.loadTexture('images/fair_clouds_4k.png'),
+            map:    THREE.ImageUtils.loadTexture('src/images/fair_clouds_4k.png'),
             side:   THREE.BackSide,
             transparent:    true
         })
@@ -397,7 +397,7 @@ function main() {
   // bring textuers
   /*  bring textuers */  
   const loader = new THREE.TextureLoader();
-  let texture = loader.load(src="textures/my-texture2.png"); //직접 지정
+  let texture = loader.load(src="src/textures/my-texture2.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
@@ -486,11 +486,11 @@ function main() {
         if (y < height) {
           world.setVoxel(x, y, z, 1);
           // world.setVoxel(x, y, z, 1); //마지막 숫자번째 texture 사용
-          // texture = loader.load(src="textures/marble_01_1k.png"); //직접 지정
+          // texture = loader.load(src="src/textures/marble_01_1k.png"); //직접 지정
         }
         // else if(y==height){
         //   // world.setVoxel(x, y, z, 1); //1번째 texture 사용
-        //   texture = loader.load(src="textures/brick_wall_001_1k.png"); //직접 지정
+        //   texture = loader.load(src="src/textures/brick_wall_001_1k.png"); //직접 지정
         // }
         // world.setVoxel(x, y, z, 1); //1번째 texture 사용
         
