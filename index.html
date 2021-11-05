@@ -17,6 +17,7 @@
       <input type="radio" name="voxel" id="voxel7" value="7"><label for="voxel7" style="background-position: -600% -0%"></label>
       <input type="radio" name="voxel" id="voxel8" value="8"><label for="voxel8" style="background-position: -700% -0%"></label>
     </div>
+    
     <div class="tiles">
       <input type="radio" name="voxel" id="voxel9"  value="9" ><label for="voxel9"  style="background-position:  -800% -0%"></label>
       <input type="radio" name="voxel" id="voxel10" value="10"><label for="voxel10" style="background-position:  -900% -0%"></label>
@@ -27,16 +28,23 @@
       <input type="radio" name="voxel" id="voxel15" value="15"><label for="voxel15" style="background-position: -1400% -0%"></label>
       <input type="radio" name="voxel" id="voxel16" value="16"><label for="voxel16" style="background-position: -1500% -0%"></label>
     </div>
-    <button type='button' id="btn1">back</button>
-    <button type='button' id="btn2">forth</button> 
   </div>
-  <script>
-    //여깄는거 js로감
-  </script>
+
+
+  <div class="info">
+    <div class="levelContainer">
+      <h1 id = "levelText"></h1>
+      <div id="progressBar">
+        <div id="progsNum">0%</div>
+    </div>
+  </div>
+  </div>
+
   </body>
   </html>  
   <script type="text/javascript" src="js/three.js"></script>
   <script type="text/javascript" src="js/orbitcontrols.js"></script>
+  <script type="text/javascript" src="js/FlyControls.js"></script>
   <script type="text/javascript" src="main.js"></script>
   <link rel="stylesheet" href="style.css">
 

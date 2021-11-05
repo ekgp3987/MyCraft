@@ -1,5 +1,6 @@
 // import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
 // import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+// import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 
 let i =0;
 
@@ -197,9 +198,9 @@ class VoxelWorld {
   }
 }
 
-/* texture */
 
-// texture atlas setting
+/*  texture atlas setting */
+
 VoxelWorld.faces = [
   { // left
     uvRow: 0,
@@ -266,42 +267,154 @@ VoxelWorld.faces = [
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
+  // shadow rendering call
+  renderer.shadowMap.enabled = true;
 
-  const cellSize = 32;
+  for(var i = 5; i <= 16; i++){
+    var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+    // item.style.display = "none";  // 커서까지 없어짐
+    item.style.visibility = "hidden"; 
+  }
 
-  const fov = 75;
+  const cellSize = 50;
+
+  const fov = 45;
   const aspect = 2;  // the canvas default
   const near = 0.1;
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(-cellSize * .3, cellSize * .8, -cellSize * .3);
+  //camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
+  camera.position.set(20, 10, 20);//카메라 시작 좌표
+   //orbitcontrol
   const controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
+  controls.target.set(20, 10, 40); //orbit control target 좌표
+  //controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
   controls.update();
+  
+
+  /*camera.position.set(25, 15, 80);//시작 좌표
+  const controls = new THREE.FlyControls(camera, canvas);
+  controls.movementSpeed = 0.1;
+  controls.autoForward = false;
+  controls.dragToLook = true;
+  controls.update(1);
+*/
+
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('lightblue');
+  scene.background = new THREE.Color('skyblue');
 
+  /* AmbientLight 자연광 */
+  const color = 0xFFFFFF;
+  var intensity = 0.5;
+  var light = new THREE.AmbientLight(color, intensity);
+  scene.add(light);
+ 
   function addLight(x, y, z) {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
+    // const color = 0xFFFFFF;
+    intensity = 0.5;
+    light = new THREE.DirectionalLight(color, intensity);
+    // shadow & shadow camera setting
+    light.castShadow = true;
+    light.shadow.bias = -0.01;  // 줄무늬 안생기게
+    light.shadowDarkness = 0.5;
+    light.shadowCameraNear = 2;
+    light.shadowCameraFar = 70;
+    light.shadowCameraLeft = -30;
+    light.shadowCameraRight = 30;
+    light.shadowCameraTop = 30;
+    light.shadowCameraBottom = -30;
     light.position.set(x, y, z);
-    scene.add(light);
+    // 빛이 비추는 방향 target
+    light.target.position.set(25, 0, 25);
+    scene.add(light, light.target);
+
+    /* 빛 위치를 표시해줌 */
+    const helper = new THREE.DirectionalLightHelper(light);
+    scene.add(helper);
+
+    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+    scene.add(cameraHelper);
   }
-  addLight(-1,  2,  4);
-  addLight( 1, -1, -2);
+  // 빛의 시작 지점
+  addLight(50, 30, 25);
+  // addLight( 1, -1, -2);
+
+  function updateLight() {
+    light.target.updateMatrixWorld();
+    helper.update();
+  }
+  
+  /* slider 관련 코드 -- 실행 X
+
+  var setx = document.getElementById("setx");
+  setx.addEventListener("input", moveX);
+
+  function moveX()
+  
+  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
+  class ColorGUIHelper {
+    constructor(object, prop) {
+      this.object = object;
+      this.prop = prop;
+    }
+    get value() {
+      return `#${this.object[this.prop].getHexString()}`;
+    }
+    set value(hexString) {
+      this.object[this.prop].set(hexString);
+    }
+  }
+
+  function makeXYZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
+    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
+    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
+    folder.open();
+  }
+
+  const gui = new dat.GUI();
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  
+  gui.add(light, 'intensity', 0, 2, 0.01);
+  gui.add(light, 'distance', 0, 40).onChange(updateLight);
+  
+  makeXYZGUI(gui, light.position, 'position', updateLight);
+  */
+
+  /* 배경에 구름 */
+  function createClouds(radius, segments) {
+    // Mesh
+    return new THREE.Mesh(
+        // geometry
+        new THREE.SphereGeometry(radius, segments, segments),
+        // material
+        new THREE.MeshBasicMaterial({
+            map:    THREE.ImageUtils.loadTexture('src/images/fair_clouds_4k.png'),
+            side:   THREE.BackSide,
+            transparent:    true
+        })
+    );
+  }
+  
+  /* 큰 구 생성 */
+  var clouds = createClouds(80, 64); 
+  /* 구 위치 조정 */
+  clouds.position.set( 25, 20, 30 );
+  scene.add(clouds);
 
   // bring textuers
+  /*  bring textuers */  
   const loader = new THREE.TextureLoader();
-  let texture = loader.load(src="flourish-cc-by-nc-sa0.png"); //직접 지정
+  let texture = loader.load(src="src/textures/my-texture2.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
-  const tileSize = 16;
-  const tileTextureWidth = 256;
-  const tileTextureHeight = 64;
+  const tileSize = 1024;
+  const tileTextureWidth = 16384;
+  const tileTextureHeight = 4096;
   const world = new VoxelWorld({
     cellSize,
     tileSize,
@@ -345,6 +458,9 @@ function main() {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
+      // object위에 그림자를 드리우게 하는 것 
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
       scene.add(mesh);
       mesh.position.set(cellX * cellSize, cellY * cellSize, cellZ * cellSize);
     // }
@@ -379,12 +495,24 @@ function main() {
         let height = 3;
         // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
-          // world.setVoxel(x, y, z, randInt(1, 17));
           world.setVoxel(x, y, z, 1);
+          // world.setVoxel(x, y, z, 1); //마지막 숫자번째 texture 사용
+          // texture = loader.load(src="src/textures/marble_01_1k.png"); //직접 지정
         }
+        // else if(y==height){
+        //   // world.setVoxel(x, y, z, 1); //1번째 texture 사용
+        //   texture = loader.load(src="src/textures/brick_wall_001_1k.png"); //직접 지정
+        // }
+        // world.setVoxel(x, y, z, 1); //1번째 texture 사용
+        
+        
       }
     }
   }
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
   updateVoxelGeometry(0,0,0);  // 0,0,0 will generate
 
   function resizeRendererToDisplaySize(renderer) {
@@ -401,8 +529,8 @@ function main() {
   let renderRequested = false;
 
   function render() {
-    renderRequested = undefined;
-
+    //renderRequested = undefined;
+    renderRequested = false
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -410,6 +538,8 @@ function main() {
     }
 
     controls.update();
+    //controls.update(1);
+    //requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
   render();
@@ -439,7 +569,15 @@ function main() {
       y: (event.clientY - rect.top ) * canvas.height / rect.height,
     };
   }
-   
+  
+  let placeVoxelCount = 0;
+  let userlevel = 0;
+  let width = 0;
+  const levelWeight = 0.1;
+  const level = document.querySelector("#levelText");
+  level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+
+
   function placeVoxel(event) {
     const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width ) *  2 - 1;
@@ -452,7 +590,16 @@ function main() {
    
     const intersection = world.intersectRay(start, end);
     if (intersection) {
-      const voxelId = event.shiftKey ? 0 : currentVoxel;
+
+      var isRightButton;
+      event = event || window.event;
+
+      if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        isRightButton = event.which == 3; 
+      else if ("button" in event)  // IE, Opera 
+        isRightButton = event.button == 2; 
+
+      const voxelId = isRightButton ? currentVoxel : 0;
       /**
        * 교차점은 면 위에 있습니다. 이는 수학적 오차로 인해 교차점이 면의 양면
        * 어디로 떨어질지 모른다는 이야기죠.
@@ -462,17 +609,104 @@ function main() {
       const pos = intersection.position.map((v, ndx) => {
         return v + intersection.normal[ndx] * (voxelId > 0 ? 0.5 : -0.5);
       });
-      world.setVoxel(...pos, voxelId);
-      updateVoxelGeometry(...pos);
-      requestRenderIfNotRequested();
+      //범위 벗어나면 생성 못함
+      if((pos[0] > 0 && pos[0] < 50) && (pos[2] > 0 && pos[2] < 50)){
+        world.setVoxel(...pos, voxelId);
+        updateVoxelGeometry(...pos);
+        requestRenderIfNotRequested();
+
+
+
+         // 레벨 관련 부분
+         if(voxelId!=0){ // 블럭 생성시만
+       
+          placeVoxelCount += levelWeight;
+          console.log("placeVoxelCount:", placeVoxelCount);
+          placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
+          moveProgress();
+          if(placeVoxelCount % 1 == 0){
+            // userlevel += 1;
+            levelup();
+           
+          }
+        }
+
+        
+      }
+
+
+       
+
+        
     }
   }
+
+  
    
   const mouse = {
     x: 0,
     y: 0,
   };
    
+
+
+  function levelup(){
+    userlevel += 1;
+    console.log("user level up!! current level:", userlevel);
+    level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+
+    switch(userlevel){
+      case 1:
+        for(var i = 5; i <= 8; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      case 2:
+        for(var i = 9; i <= 12; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      case 3:
+        for(var i = 13; i <= 16; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      default:
+        break;
+    }
+    
+    
+
+  }
+
+  function moveProgress(){
+    const ele=document.getElementById('progsNum');
+
+    
+        if(width>=90){
+            width = 0;
+            ele.style.width=width+"%";
+            ele.innerHTML=width+"%";
+        }else{
+            width = width + levelWeight*100;
+            ele.style.width=width+"%";
+            ele.innerHTML=width+"%";
+        } 
+
+      console.log('width:', width);
+}
+  
+
+
+
+
+  
   function recordStartPosition(event) {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
@@ -556,5 +790,25 @@ function main() {
 }
 
 main();
+// let i =0;
+//  function back(){
+//    i = Math.abs(--i)%3;
+//    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+//    console.log(i);
+//    var ui = document.getElementById("ui")
+//    var tiles = ui.querySelectorAll("input[type=radio] + label")
+//    for(var j = 0; j<16; j++){
+//      tiles[j].style.backgroundImage = url;
+//    }    
+//  }
+//  function forth(){
+//    i = Math.abs(++i)%3;
+//    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
+//    var ui = document.getElementById("ui")
+//    var tiles = ui.querySelectorAll("input[type=radio] + label")
+//    for(var j = 0; j<16; j++){
+//      tiles[j].style.backgroundImage = url;
 
+//    }     
+//  }
 
