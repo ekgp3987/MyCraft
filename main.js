@@ -299,78 +299,44 @@ function main() {
   var intensity = 0.5;
   var light = new THREE.AmbientLight(color, intensity);
   scene.add(light);
- 
-  function addLight(x, y, z) {
-    // const color = 0xFFFFFF;
-    intensity = 0.5;
-    light = new THREE.DirectionalLight(color, intensity);
-    // shadow & shadow camera setting
-    light.castShadow = true;
-    light.shadow.bias = -0.01;  // 줄무늬 안생기게
-    light.shadowDarkness = 0.5;
-    light.shadowCameraNear = 2;
-    light.shadowCameraFar = 70;
-    light.shadowCameraLeft = -30;
-    light.shadowCameraRight = 30;
-    light.shadowCameraTop = 30;
-    light.shadowCameraBottom = -30;
-    light.position.set(x, y, z);
-    // 빛이 비추는 방향 target
-    light.target.position.set(25, 0, 25);
-    scene.add(light, light.target);
 
-    /* 빛 위치를 표시해줌 */
-    const helper = new THREE.DirectionalLightHelper(light);
-    scene.add(helper);
+  intensity = 0.7;
+  light = new THREE.DirectionalLight(color, intensity);
+  // shadow & shadow camera setting
+  light.castShadow = true;
+  light.shadow.bias = -0.01;  // 줄무늬 안생기게
+  light.shadowDarkness = 0.5;
+  light.shadowCameraNear = 2;
+  light.shadowCameraFar = 80;
+  light.shadowCameraLeft = -30;
+  light.shadowCameraRight = 30;
+  light.shadowCameraTop = 30;
+  light.shadowCameraBottom = -30;
 
-    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
-    scene.add(cameraHelper);
-  }
   // 빛의 시작 지점
-  addLight(50, 30, 25);
-  // addLight( 1, -1, -2);
+  var x = 0;
 
-  function updateLight() {
-    light.target.updateMatrixWorld();
-    helper.update();
-  }
-  
-  /* slider 관련 코드 -- 실행 X
+  light.position.set(75, 30, 25);
 
-  var setx = document.getElementById("setx");
-  setx.addEventListener("input", moveX);
+  /* time slider 관련 코드 */
+  document.getElementById("timeslider").onchange = function () {
+    scene.dispose(light, light.target);
+    x = event.srcElement.value;
 
-  function moveX()
-  
-  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
-  class ColorGUIHelper {
-    constructor(object, prop) {
-      this.object = object;
-      this.prop = prop;
-    }
-    get value() {
-      return `#${this.object[this.prop].getHexString()}`;
-    }
-    set value(hexString) {
-      this.object[this.prop].set(hexString);
-    }
-  }
+    light.position.set(x, 30, 25)
+    // scene.background = new THREE.Color('black');
+    console.log(x);
+  };
+  // 빛이 비추는 방향 target
+  light.target.position.set(25, 0, 25);
+  scene.add(light, light.target);
 
-  function makeXYZGUI(gui, vector3, name, onChangeFn) {
-    const folder = gui.addFolder(name);
-    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
-    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
-    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
-    folder.open();
-  }
+  /* 빛 위치를 표시해줌 
+  const helper = new THREE.DirectionalLightHelper(light);
+  scene.add(helper);
 
-  const gui = new dat.GUI();
-  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-  
-  gui.add(light, 'intensity', 0, 2, 0.01);
-  gui.add(light, 'distance', 0, 40).onChange(updateLight);
-  
-  makeXYZGUI(gui, light.position, 'position', updateLight);
+  const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+  scene.add(cameraHelper);
   */
 
   /* 배경에 구름 */
