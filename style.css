@@ -9,9 +9,20 @@ body {
   display: block;
 } */
 
+element {
+  --upper-bg-color: pink;
+  --down-bg-color: blue;
+}
+
+:root {
+  --upper-bg-color: pink;
+  --down-bg-color: blue;
+}
+
 body {
   margin: 0;
   overflow: hidden;
+  background: linear-gradient(var(--upper-bg-color), var(--down-bg-color));
 }
 
 #gl-canvas {
@@ -104,6 +115,11 @@ outline: 3px solid red;
   margin-right: 10%;
   padding-left: 0.5%;
   background: rgba(0, 0, 0, 0.8);
+}
+
+.timeinfo:after{
+  display: block;
+  padding-top: 66.66%;
 }
 
 .timeContainer{

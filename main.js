@@ -264,7 +264,7 @@ VoxelWorld.faces = [
 
 function main() {
   const canvas = document.querySelector('#gl-canvas');
-  const renderer = new THREE.WebGLRenderer({canvas});
+  const renderer = new THREE.WebGLRenderer({canvas, alpha: true});
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
@@ -298,7 +298,8 @@ function main() {
 
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('skyblue');
+  // scene.background = new THREE.Color('skyblue');
+  renderer.setClearColor( 0x000000, 0 ); // the default
 
   var stars = createStars(80, 64);
   stars.position.set( 25, 20, 30 );
@@ -335,26 +336,33 @@ function main() {
     x = event.srcElement.value;
 
     light.position.set(x, 30, 25)
-    if (x < -15) {
-      scene.background =  linear-gradient('blue', 'pink');  // 짙은 파란색
+    if (x < -10) {
+      document.body.style.setProperty("--upper-bg-color", 'pink' ); // default
+      document.body.style.setProperty("--down-bg-color", 'blue' );  
     }
-    else if (x < -5) {
-      scene.background =  new THREE.Color( 0x3380e6 );  // 중 새벽
+    else if (x < 0) {
+      document.body.style.setProperty("--upper-bg-color", '#FF99FF' ); // 연한 핑크
+      document.body.style.setProperty("--down-bg-color", '#0066FF' );  // 연한 파랑
     }
-    else if (x < 5) {
-      scene.background =  new THREE.Color( 0xca6f2 );  // 끝 새벽
+    else if (x < 10) {
+      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
+      document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
     }
-    else if (x < 45) {
-      scene.background = new THREE.Color('skyblue');
+    else if (x < 40) {
+      document.body.style.setProperty("--upper-bg-color", '#66CCFF');   // 파랑
+      document.body.style.setProperty("--down-bg-color", '#99CCFF');    // 파랑
     }
-    else if (x < 55) {
-      scene.background =  new THREE.Color( 0x85c2ff );  // 초 새벽
+    else if (x < 50) {
+      document.body.style.setProperty("--upper-bg-color", '#CCFFFF');   // 희미한 파랑
+      document.body.style.setProperty("--down-bg-color", '#FF9966');     // 자몽
     }
-    else if (x < 65) {
-      scene.background =  new THREE.Color( 0xabb5ff );  // 초 새벽
+    else if (x < 60) {
+      document.body.style.setProperty("--upper-bg-color", 'orange');  // 오렌지
+      document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
     }
-    else {
-      scene.background =  new THREE.Color( 0xc9abff );  // 초 새벽
+    else if (x < 76) {
+      document.body.style.setProperty("--upper-bg-color", '#FFFF99'); // 연노랑
+      document.body.style.setProperty("--down-bg-color", '#FF6600');  // 오렌지
     }
     
     console.log(x);
