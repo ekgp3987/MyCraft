@@ -596,6 +596,8 @@ function main() {
         isRightButton = event.which == 3; 
       else if ("button" in event)  // IE, Opera 
         isRightButton = event.button == 2; 
+      
+      if(isRightButton == 1 && currentVoxel == 0) return;
 
       const voxelId = isRightButton ? currentVoxel : 0;
       /**
