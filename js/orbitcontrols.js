@@ -73,12 +73,54 @@
 			this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
 			// The four arrow keys
 
+			
 			this.keys = {
 				LEFT: 'ArrowLeft',
 				UP: 'ArrowUp',
 				RIGHT: 'ArrowRight',
 				BOTTOM: 'ArrowDown'
 			}; // Mouse buttons
+			
+
+			this.keydown = function ( event ) {
+				if ( event.altKey ) {
+					return;
+				}
+				switch ( event.code ) {
+
+					case 'KeyW':
+						dollyIn( getZoomScale() );
+						scope.update();
+						break;
+
+					case 'KeyS':
+						dollyOut( getZoomScale() );
+						scope.update();
+						break;
+
+					case 'KeyA':
+						console.log("AAA");
+						state = STATE.PAN;
+						panStart.set( event.clientX, event.clientY );
+						panEnd.set( event.clientX-5, event.clientY );
+
+						panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+						pan( panDelta.x, panDelta.y );
+
+						panStart.copy( panEnd );
+					//panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+					//pan( panDelta.x, panDelta.y );
+					//panStart.copy( panEnd );
+						scope.update();
+
+						//this.moveState.left = 1;
+						break;
+
+					case 'KeyD':
+						//this.moveState.right = 1;
+						break;
+				}
+			};
 
 			this.mouseButtons = {
 				LEFT: THREE.MOUSE.ROTATE,
@@ -266,10 +308,11 @@
 				scope.domElement.removeEventListener( 'wheel', onMouseWheel );
 				scope.domElement.removeEventListener( 'pointermove', onPointerMove );
 				scope.domElement.removeEventListener( 'pointerup', onPointerUp );
-
+				//추가
+				scope._domElementKeyEvents.removeEventListener( 'keydown', onKeyDown );
 				if ( scope._domElementKeyEvents !== null ) {
 
-					scope._domElementKeyEvents.removeEventListener( 'keydown', onKeyDown );
+					//scope._domElementKeyEvents.removeEventListener( 'keydown', onKeyDown );
 
 				} //scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
 
@@ -505,7 +548,9 @@
 			}
 
 			function handleMouseMovePan( event ) {
-
+				console.log(event.clientX+": clientX"); //추가
+				console.log(event.clientY+": clientY"); //추가
+				
 				panEnd.set( event.clientX, event.clientY );
 				panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
 				pan( panDelta.x, panDelta.y );
@@ -520,7 +565,7 @@
 			function handleMouseWheel( event ) {
 
 				if ( event.deltaY < 0 ) {
-
+					console.log("mouse");
 					dollyIn( getZoomScale() );
 
 				} else if ( event.deltaY > 0 ) {
@@ -532,9 +577,8 @@
 				scope.update();
 
 			}
-
+/*
 			function handleKeyDown( event ) {
-
 				let needsUpdate = false;
 
 				switch ( event.code ) {
@@ -558,19 +602,15 @@
 						pan( - scope.keyPanSpeed, 0 );
 						needsUpdate = true;
 						break;
-
 				}
-
 				if ( needsUpdate ) {
-
 					// prevent the browser from scrolling on cursor keys
 					event.preventDefault();
 					scope.update();
-
 				}
-
+			
 			}
-
+*/
 			function handleTouchStartRotate() {
 
 				if ( pointers.length === 1 ) {
@@ -828,6 +868,9 @@
 						break;
 
 					case THREE.MOUSE.PAN:
+
+						console.log("right mouse click");
+
 						if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
 							if ( scope.enableRotate === false ) return;
@@ -903,7 +946,45 @@
 			function onKeyDown( event ) {
 
 				if ( scope.enabled === false || scope.enablePan === false ) return;
-				handleKeyDown( event );
+
+				let needsUpdate = false;
+
+				switch ( event.code ) {
+
+					case scope.keys.UP:
+						//pan( 0, scope.keyPanSpeed );
+						alert.log("come");
+						dollyIn( getZoomScale() );
+						scope.update();
+
+						needsUpdate = true;
+						break;
+
+					case scope.keys.BOTTOM:
+						//pan( 0, - scope.keyPanSpeed );
+						needsUpdate = true;
+						break;
+
+					case scope.keys.LEFT:
+						//pan( scope.keyPanSpeed, 0 );
+						needsUpdate = true;
+						break;
+
+					case scope.keys.RIGHT:
+						//pan( - scope.keyPanSpeed, 0 );
+						needsUpdate = true;
+						break;
+
+				}
+
+				if ( needsUpdate ) {
+					// prevent the browser from scrolling on cursor keys
+					event.preventDefault();
+					scope.update();
+				}
+
+				//handleKeyDown( event );
+
 
 			}
 
@@ -1066,6 +1147,10 @@
 				return pointerPositions[ pointer.pointerId ];
 
 			} //
+
+			//추가.
+			const _keydown = this.keydown.bind( this );
+			window.addEventListener( 'keydown', _keydown );
 
 
 			scope.domElement.addEventListener( 'contextmenu', onContextMenu );
