@@ -89,12 +89,12 @@
 				switch ( event.code ) {
 
 					case 'KeyW':
-						dollyIn( getZoomScaleKey() ); //마우스보다 더 정밀한 움직임 
+						dollyIn( getZoomScaleKey() ); //마우스보다 더 빠른 움직임
 						scope.update();
 						break;
 
 					case 'KeyS':
-						dollyOut( getZoomScaleKey() ); //마우스보다 더 정밀한 움직임
+						dollyOut( getZoomScaleKey() ); //마우스보다 더 빠른 움직임
 						scope.update();
 						break;
 
@@ -352,13 +352,13 @@
 
 			function getZoomScale() {
 
-				return Math.pow( 0.9, scope.zoomSpeed );
+				return Math.pow( 0.99, scope.zoomSpeed );
 
 			}
 
 			function getZoomScaleKey() {
 
-				return Math.pow( 0.99, scope.zoomSpeed );
+				return Math.pow( 0.93, scope.zoomSpeed );
 
 			}
 
@@ -554,7 +554,7 @@
 
 			}
 
-			////////////추가/////////////////////////////
+			////////////추가////////////////////////////////////////////
 			function handleLeftMovePan( event ) {
 				
 				panEnd.set(  object.position.x+10, object.position.y );
@@ -573,6 +573,8 @@
 				scope.update();
 
 			}
+			///////////////////////////////////////////////////////////////
+
 
 			function handleMouseUp() { // no-op
 			}
@@ -580,7 +582,7 @@
 			function handleMouseWheel( event ) {
 
 				if ( event.deltaY < 0 ) {
-					console.log("mouse");
+
 					dollyIn( getZoomScale() );
 
 				} else if ( event.deltaY > 0 ) {
@@ -884,8 +886,6 @@
 
 					case THREE.MOUSE.PAN:
 
-						console.log("right mouse click");
-
 						if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
 							if ( scope.enableRotate === false ) return;
@@ -1135,10 +1135,10 @@
 
 			} //
 
-			//추가.
+			//추가//////////////////////////////////////
 			const _keydown = this.keydown.bind( this );
 			window.addEventListener( 'keydown', _keydown );
-
+			//////////////////////////////////////////////
 
 			scope.domElement.addEventListener( 'contextmenu', onContextMenu );
 			scope.domElement.addEventListener( 'pointerdown', onPointerDown );

@@ -728,6 +728,7 @@ function main() {
     window.addEventListener('pointermove', recordMovement);
     window.addEventListener('pointerup', placeVoxelIfNoMovement);
   }, { passive: false });
+  
   canvas.addEventListener('touchstart', (event) => {
     // prevent scrolling
     event.preventDefault();
