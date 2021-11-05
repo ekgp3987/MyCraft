@@ -294,14 +294,18 @@ function main() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('skyblue');
 
+  var stars = createStars(80, 64);
+  stars.position.set( 25, 20, 30 );
+
   /* AmbientLight 자연광 */
   const color = 0xFFFFFF;
   var intensity = 0.5;
-  var light = new THREE.AmbientLight(color, intensity);
-  scene.add(light);
+  var ambientlight = new THREE.AmbientLight(color, intensity);
+  scene.add(ambientlight);
 
+  /* DirectionalLight 태양 */
   intensity = 0.7;
-  light = new THREE.DirectionalLight(color, intensity);
+  var light = new THREE.DirectionalLight(color, intensity);
   // shadow & shadow camera setting
   light.castShadow = true;
   light.shadow.bias = -0.01;  // 줄무늬 안생기게
@@ -321,10 +325,32 @@ function main() {
   /* time slider 관련 코드 */
   document.getElementById("timeslider").onchange = function () {
     scene.dispose(light, light.target);
+    scene.dispose(stars);
     x = event.srcElement.value;
 
     light.position.set(x, 30, 25)
-    // scene.background = new THREE.Color('black');
+    if (x < -15) {
+      scene.background =  linear-gradient('blue', 'pink');  // 짙은 파란색
+    }
+    else if (x < -5) {
+      scene.background =  new THREE.Color( 0x3380e6 );  // 중 새벽
+    }
+    else if (x < 5) {
+      scene.background =  new THREE.Color( 0xca6f2 );  // 끝 새벽
+    }
+    else if (x < 45) {
+      scene.background = new THREE.Color('skyblue');
+    }
+    else if (x < 55) {
+      scene.background =  new THREE.Color( 0x85c2ff );  // 초 새벽
+    }
+    else if (x < 65) {
+      scene.background =  new THREE.Color( 0xabb5ff );  // 초 새벽
+    }
+    else {
+      scene.background =  new THREE.Color( 0xc9abff );  // 초 새벽
+    }
+    
     console.log(x);
   };
   // 빛이 비추는 방향 target
@@ -353,12 +379,41 @@ function main() {
         })
     );
   }
+
+  /* Create stars */
+  function createStars(radius, segments) {
+    // Mesh
+    return new THREE.Mesh(
+        // geometry
+        new THREE.SphereGeometry(radius, segments, segments),
+        // material
+        new THREE.MeshBasicMaterial({
+            map:    THREE.ImageUtils.loadTexture('src/images/galaxy_starfield.png'),
+            side:   THREE.BackSide
+        })
+    );
+}
   
   /* 큰 구 생성 */
   var clouds = createClouds(80, 64); 
   /* 구 위치 조정 */
   clouds.position.set( 25, 20, 30 );
   scene.add(clouds);
+
+  /* night button */
+  var buttonpressed = 0;
+  document.getElementById("nightbutton").onclick = function () {
+    buttonpressed = 1;
+    ambientlight.intensity = 0.2
+    scene.dispose(ambientlight);
+
+    scene.remove(clouds);
+    scene.add(stars);
+
+    intensity = 0.2;
+    scene.add(ambientlight);
+
+  }
 
   // bring textuers
   /*  bring textuers */  

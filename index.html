@@ -2,11 +2,6 @@
 <html>
   <link rel="stylesheet" type="text/css" href="style.css">
 
-  <div id="time">
-    time1 (그림자 방향) 오전 7시 <input id="timeslider" type="range" min="-25" max="75" step="1" value="75">
-    오후 6시
-  </div>
-
   <body>
     <canvas id="gl-canvas" width="1024" height="512">
   <!-- Oops ... your browser doesn't support the HTML5 canvas element -->
@@ -45,6 +40,18 @@
         <div id="progsNum">0%</div>
     </div>
   </div>
+  </div>
+
+  <div class="timeinfo">
+    <div class="timeContiner">
+      <h1 id = "timeText">time am7-pm6/night</h1>
+      <div id="timeSlider">
+        <input id="timeslider" type="range" min="-25" max="75" step="1" value="35">
+        
+
+        <input id="nightbutton" type="button" value = "night">
+      </div>
+    </div>
   </div>
 
   </body>

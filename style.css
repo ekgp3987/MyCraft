@@ -95,3 +95,22 @@ outline: 3px solid red;
   text-align: center;
   line-height: 50px;
 }
+
+.timeinfo {
+  position: absolute;
+  width: 40vh;
+  margin-top: 12%;;
+  margin-left: 1%;;
+  margin-right: 10%;
+  padding-left: 0.5%;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.timeContainer{
+  margin: 10%;
+}
+
+#timeText{
+  font-size: 4vh;
+  color: white;
+}
