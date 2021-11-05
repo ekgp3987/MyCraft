@@ -283,7 +283,7 @@ function main() {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
   //camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
-  camera.position.set(20, 5, 20);//카메라 시작 좌표
+  camera.position.set(20, 10, 20);//카메라 시작 좌표
    //orbitcontrol
   const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(20, 10, 40); //orbit control target 좌표

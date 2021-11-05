@@ -100,14 +100,14 @@
 
 					case 'KeyA':
 						console.log("AAA");
-						state = STATE.PAN;
-						panStart.set( event.clientX, event.clientY );
-						panEnd.set( event.clientX-5, event.clientY );
+						//state = STATE.PAN;
+						//panStart.set( event.clientX, event.clientY );
+						//panEnd.set( event.clientX-5, event.clientY );
 
-						panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-						pan( panDelta.x, panDelta.y );
+						//panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+						//pan( panDelta.x, panDelta.y );
 
-						panStart.copy( panEnd );
+						//panStart.copy( panEnd );
 					//panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
 					//pan( panDelta.x, panDelta.y );
 					//panStart.copy( panEnd );
@@ -956,7 +956,6 @@
 						alert.log("come");
 						dollyIn( getZoomScale() );
 						scope.update();
-
 						needsUpdate = true;
 						break;
 
