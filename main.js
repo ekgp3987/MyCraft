@@ -268,6 +268,12 @@ function main() {
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
+  for(var i = 5; i <= 16; i++){
+    var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+    // item.style.display = "none";  // 커서까지 없어짐
+    item.style.visibility = "hidden"; 
+  }
+
   const cellSize = 50;
 
   const fov = 45;
@@ -643,6 +649,32 @@ function main() {
     userlevel += 1;
     console.log("user level up!! current level:", userlevel);
     level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+
+    switch(userlevel){
+      case 1:
+        for(var i = 5; i <= 8; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      case 2:
+        for(var i = 9; i <= 12; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      case 3:
+        for(var i = 13; i <= 16; i++){
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+          // item.style.display = "block"; 
+          item.style.visibility = "visible"; 
+        }
+        break;
+      default:
+        break;
+    }
     
     
 
