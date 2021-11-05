@@ -2,7 +2,28 @@
 // import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 // import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 
-class VoxelWorld {
+// await sleep(10000);
+// console.log('10초 경과');
+
+let slab_toggle = false;
+
+function slab_toggle_click() {
+  slab_toggle  = !slab_toggle;
+  console.log('slab_toggle:',slab_toggle);
+}
+			// //추가.
+			// const _keydown = this.keydown.bind( this );
+			// window.addEventListener( 'keydown', _keydown );
+
+      // this.keydown = function ( event ) {
+      //   switch ( event.code ) {
+      //   case 'KeyT':
+      //       slab_toggle  = !slab_toggle;
+      //       console.log('slab_toggle:',slab_toggle);
+			// 			break;
+      //   }
+      // }
+class VoxelWorld_slab {
   constructor(options) {
     this.cellSize = options.cellSize;
     this.tileSize = options.tileSize;
@@ -78,7 +99,7 @@ class VoxelWorld {
             // voxel 0 is sky (empty) so for UVs we start at 0
             const uvVoxel = voxel - 1;
             // There is a voxel here but do we need faces for it?
-            for (const {dir, corners, uvRow} of VoxelWorld.faces) {
+            for (const {dir, corners, uvRow} of VoxelWorld_slab.faces) {
               const neighbor = this.getVoxel(
                   voxelX + dir[0],
                   voxelY + dir[1],
@@ -199,7 +220,7 @@ class VoxelWorld {
 
 /*  texture atlas setting */
 
-VoxelWorld.faces = [
+VoxelWorld_slab.faces = [
   { // left
     uvRow: 0,
     dir: [ -1,  0,  0, ],
@@ -262,6 +283,75 @@ VoxelWorld.faces = [
   },
 ];
 
+
+const slab_height = 0.5;
+
+
+VoxelWorld_slab.faces = [
+  { // left
+    uvRow: 0,
+    dir: [ -1,  0,  0, ],
+    corners: [
+      { pos: [ 0, slab_height, 0 ], uv: [ 0, 1 ], },
+      { pos: [ 0, 0, 0 ], uv: [ 0, 0 ], },
+      { pos: [ 0, slab_height, 1 ], uv: [ 1, 1 ], },
+      { pos: [ 0, 0, 1 ], uv: [ 1, 0 ], },
+    ],
+  },
+  { // right
+    uvRow: 0,
+    dir: [  1,  0,  0, ],
+    corners: [
+      { pos: [ 1, slab_height, 1 ], uv: [ 0, 1 ], },
+      { pos: [ 1, 0, 1 ], uv: [ 0, 0 ], },
+      { pos: [ 1, slab_height, 0 ], uv: [ 1, 1 ], },
+      { pos: [ 1, 0, 0 ], uv: [ 1, 0 ], },
+    ],
+  },
+  { // bottom
+    uvRow: 1,
+    dir: [  0, -1,  0, ],
+    corners: [
+      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
+      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
+      { pos: [ 1, 0, 0 ], uv: [ 1, 1 ], },
+      { pos: [ 0, 0, 0 ], uv: [ 0, 1 ], },
+    ],
+  },
+  { // top
+    uvRow: 2,
+    dir: [  0,  1,  0, ],
+    corners: [
+      { pos: [ 0, slab_height, 1 ], uv: [ 1, 1 ], },
+      { pos: [ 1, slab_height, 1 ], uv: [ 0, 1 ], },
+      { pos: [ 0, slab_height, 0 ], uv: [ 1, 0 ], },
+      { pos: [ 1, slab_height, 0 ], uv: [ 0, 0 ], },
+    ],
+  },
+  { // back
+    uvRow: 0,
+    dir: [  0,  0, -1, ],
+    corners: [
+      { pos: [ 1, 0, 0 ], uv: [ 0, 0 ], },
+      { pos: [ 0, 0, 0 ], uv: [ 1, 0 ], },
+      { pos: [ 1, slab_height, 0 ], uv: [ 0, 1 ], },
+      { pos: [ 0, slab_height, 0 ], uv: [ 1, 1 ], },
+    ],
+  },
+  { // front
+    uvRow: 0,
+    dir: [  0,  0,  1, ],
+    corners: [
+      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
+      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
+      { pos: [ 0, slab_height, 1 ], uv: [ 0, 1 ], },
+      { pos: [ 1, slab_height, 1 ], uv: [ 1, 1 ], },
+    ],
+  },
+];
+
+
+
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({canvas});
@@ -308,7 +398,7 @@ function main() {
   var intensity = 0.5;
   var light = new THREE.AmbientLight(color, intensity);
   scene.add(light);
- 
+
   function addLight(x, y, z) {
     // const color = 0xFFFFFF;
     intensity = 0.5;
@@ -413,7 +503,7 @@ function main() {
   const tileSize = 1024;
   const tileTextureWidth = 16384;
   const tileTextureHeight = 4096;
-  const world = new VoxelWorld({
+  const world = new VoxelWorld_slab({
     cellSize,
     tileSize,
     tileTextureWidth,
@@ -487,6 +577,7 @@ function main() {
     }
   }
   
+  // 플랫폼 생성
   for (let y = 0; y < cellSize; ++y) {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
@@ -580,12 +671,12 @@ function main() {
     const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width ) *  2 - 1;
     const y = (pos.y / canvas.height) * -2 + 1;  // Y축을 뒤집었음
-   
+  
     const start = new THREE.Vector3();
     const end = new THREE.Vector3();
     start.setFromMatrixPosition(camera.matrixWorld);
     end.set(x, y, 1).unproject(camera);
-   
+  
     const intersection = world.intersectRay(start, end);
     if (intersection) {
 
@@ -617,7 +708,7 @@ function main() {
 
          // 레벨 관련 부분
          if(voxelId!=0){ // 블럭 생성시만
-       
+      
           placeVoxelCount += levelWeight;
           console.log("placeVoxelCount:", placeVoxelCount);
           placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
@@ -625,7 +716,7 @@ function main() {
           if(placeVoxelCount % 1 == 0){
             // userlevel += 1;
             levelup();
-           
+          
           }
         }
 
@@ -633,19 +724,19 @@ function main() {
       }
 
 
-       
+      
 
         
     }
   }
 
   
-   
+  
   const mouse = {
     x: 0,
     y: 0,
   };
-   
+  
 
 
   function levelup(){
@@ -745,25 +836,3 @@ function main() {
 }
 
 main();
-// let i =0;
-//  function back(){
-//    i = Math.abs(--i)%3;
-//    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
-//    console.log(i);
-//    var ui = document.getElementById("ui")
-//    var tiles = ui.querySelectorAll("input[type=radio] + label")
-//    for(var j = 0; j<16; j++){
-//      tiles[j].style.backgroundImage = url;
-//    }    
-//  }
-//  function forth(){
-//    i = Math.abs(++i)%3;
-//    var url = 'url("flourish-cc-by-nc-sa'.concat(i,'.png")');
-//    var ui = document.getElementById("ui")
-//    var tiles = ui.querySelectorAll("input[type=radio] + label")
-//    for(var j = 0; j<16; j++){
-//      tiles[j].style.backgroundImage = url;
-
-//    }     
-//  }
-
