@@ -312,7 +312,7 @@ function main() {
 
   /* DirectionalLight 태양 */
   intensity = 0.7;
-  var light = new THREE.DirectionalLight(color, intensity);
+  var light = new THREE.DirectionalLight(0xFFAAAA, intensity);
   // shadow & shadow camera setting
   light.castShadow = true;
   light.shadow.bias = -0.01;  // 줄무늬 안생기게
@@ -335,38 +335,47 @@ function main() {
     scene.dispose(stars);
     x = event.srcElement.value;
 
-    light.position.set(x, 30, 25)
+    light.position.set(x, 30, 25);
     if (x < -10) {
       document.body.style.setProperty("--upper-bg-color", 'pink' ); // default
       document.body.style.setProperty("--down-bg-color", 'blue' );  
+      light.color.setHex(0xFFAAAA);
     }
     else if (x < 0) {
       document.body.style.setProperty("--upper-bg-color", '#FF99FF' ); // 연한 핑크
       document.body.style.setProperty("--down-bg-color", '#0066FF' );  // 연한 파랑
+      light.color.setHex(0xFFAAAA);
     }
     else if (x < 10) {
       document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
       document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
+      light.color.setHex(0xAAAAFF);
     }
     else if (x < 40) {
       document.body.style.setProperty("--upper-bg-color", '#66CCFF');   // 파랑
       document.body.style.setProperty("--down-bg-color", '#99CCFF');    // 파랑
+      light.color.setHex(0xFFFFFF);
     }
     else if (x < 50) {
       document.body.style.setProperty("--upper-bg-color", '#CCFFFF');   // 희미한 파랑
       document.body.style.setProperty("--down-bg-color", '#FF9966');     // 자몽
+      light.color.setHex(0XFFCCAA);
+      
     }
     else if (x < 60) {
       document.body.style.setProperty("--upper-bg-color", 'orange');  // 오렌지
       document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
+      light.color.setHex(0XFFCCAA);
     }
     else if (x < 76) {
       document.body.style.setProperty("--upper-bg-color", '#FFFF99'); // 연노랑
       document.body.style.setProperty("--down-bg-color", '#FF6600');  // 오렌지
+      light.color.setHex(0XFFCCAA);
     }
     
     console.log(x);
   };
+
   // 빛이 비추는 방향 target
   light.target.position.set(25, 0, 25);
   scene.add(light, light.target);
