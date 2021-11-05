@@ -73,14 +73,14 @@
 			this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
 			// The four arrow keys
 
-			
+			/*
 			this.keys = {
 				LEFT: 'ArrowLeft',
 				UP: 'ArrowUp',
 				RIGHT: 'ArrowRight',
 				BOTTOM: 'ArrowDown'
 			}; // Mouse buttons
-			
+			*/
 
 			this.keydown = function ( event ) {
 				if ( event.altKey ) {
@@ -89,35 +89,27 @@
 				switch ( event.code ) {
 
 					case 'KeyW':
-						dollyIn( getZoomScale() );
+						dollyIn( getZoomScaleKey() ); //마우스보다 더 정밀한 움직임 
 						scope.update();
 						break;
 
 					case 'KeyS':
-						dollyOut( getZoomScale() );
+						dollyOut( getZoomScaleKey() ); //마우스보다 더 정밀한 움직임
 						scope.update();
 						break;
 
-					case 'KeyA':
-						console.log("AAA");
-						//state = STATE.PAN;
-						//panStart.set( event.clientX, event.clientY );
-						//panEnd.set( event.clientX-5, event.clientY );
-
-						//panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-						//pan( panDelta.x, panDelta.y );
-
-						//panStart.copy( panEnd );
-					//panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-					//pan( panDelta.x, panDelta.y );
-					//panStart.copy( panEnd );
+					case 'KeyA':	
+						panStart.set( object.position.x, object.position.y );
+						state = STATE.PAN;
+						handleLeftMovePan( event );
 						scope.update();
-
-						//this.moveState.left = 1;
 						break;
 
-					case 'KeyD':
-						//this.moveState.right = 1;
+					case 'KeyD':	
+						panStart.set( object.position.x, object.position.y );
+						state = STATE.PAN;
+						handleRightMovePan( event );
+						scope.update();
 						break;
 				}
 			};
@@ -360,7 +352,13 @@
 
 			function getZoomScale() {
 
-				return Math.pow( 0.95, scope.zoomSpeed );
+				return Math.pow( 0.9, scope.zoomSpeed );
+
+			}
+
+			function getZoomScaleKey() {
+
+				return Math.pow( 0.99, scope.zoomSpeed );
 
 			}
 
@@ -548,10 +546,27 @@
 			}
 
 			function handleMouseMovePan( event ) {
-				console.log(event.clientX+": clientX"); //추가
-				console.log(event.clientY+": clientY"); //추가
-				
 				panEnd.set( event.clientX, event.clientY );
+				panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+				pan( panDelta.x, panDelta.y );
+				panStart.copy( panEnd );
+				scope.update();
+
+			}
+
+			////////////추가/////////////////////////////
+			function handleLeftMovePan( event ) {
+				
+				panEnd.set(  object.position.x+10, object.position.y );
+				panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+				pan( panDelta.x, panDelta.y );
+				panStart.copy( panEnd );
+				scope.update();
+
+			}
+			function handleRightMovePan( event ) {
+				
+				panEnd.set(  object.position.x-10, object.position.y );
 				panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
 				pan( panDelta.x, panDelta.y );
 				panStart.copy( panEnd );
@@ -942,39 +957,12 @@
 				scope.dispatchEvent( _endEvent );
 
 			}
-
+			/*
 			function onKeyDown( event ) {
 
 				if ( scope.enabled === false || scope.enablePan === false ) return;
 
 				let needsUpdate = false;
-
-				switch ( event.code ) {
-
-					case scope.keys.UP:
-						//pan( 0, scope.keyPanSpeed );
-						alert.log("come");
-						dollyIn( getZoomScale() );
-						scope.update();
-						needsUpdate = true;
-						break;
-
-					case scope.keys.BOTTOM:
-						//pan( 0, - scope.keyPanSpeed );
-						needsUpdate = true;
-						break;
-
-					case scope.keys.LEFT:
-						//pan( scope.keyPanSpeed, 0 );
-						needsUpdate = true;
-						break;
-
-					case scope.keys.RIGHT:
-						//pan( - scope.keyPanSpeed, 0 );
-						needsUpdate = true;
-						break;
-
-				}
 
 				if ( needsUpdate ) {
 					// prevent the browser from scrolling on cursor keys
@@ -984,8 +972,8 @@
 
 				//handleKeyDown( event );
 
-
 			}
+			*/
 
 			function onTouchStart( event ) {
 
