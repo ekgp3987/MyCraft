@@ -479,6 +479,7 @@ function main() {
       scene.add(ambientlight);
     }
   
+    render();
   }
 
   // bring textuers
