@@ -5,12 +5,14 @@
 // await sleep(10000);
 // console.log('10초 경과');
 
-let slab_toggle = false;
+let slab_toggle = true; //true = 전체블럭, false = 반블럭
+let full_height = 0.5;
 
-function slab_toggle_click() {
-  slab_toggle = !slab_toggle;
-  console.log('slab_toggle:', slab_toggle);
-}
+// if (slab_toggle) full_height = 1;
+// else full_height = 0.5;
+
+
+
 // //추가.
 // const _keydown = this.keydown.bind( this );
 // window.addEventListener( 'keydown', _keydown );
@@ -23,7 +25,10 @@ function slab_toggle_click() {
 // 			break;
 //   }
 // }
-class VoxelWorld_slab {
+
+
+
+class VoxelWorld {
   constructor(options) {
     this.cellSize = options.cellSize;
     this.tileSize = options.tileSize;
@@ -42,6 +47,7 @@ class VoxelWorld_slab {
       voxelZ * cellSize +
       voxelX;
   }
+  // 각 셀의 id 정하기 - 각 cell의 위치값을 쉼표로 분할한 문자열. ex: '1,0,0'
   computeCellId(x, y, z) {
     const { cellSize } = this;
     const cellX = Math.floor(x / cellSize);
@@ -54,12 +60,13 @@ class VoxelWorld_slab {
   }
   setVoxel(x, y, z, v) {
     let cell = this.getCellForVoxel(x, y, z);
-    if (!cell) {
+    if (!cell) {  // 존재하지 않는 cell의 복셀을 추가
       cell = this.addCellForVoxel(x, y, z);
     }
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
   }
+  //복셀 추가
   addCellForVoxel(x, y, z) {
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
@@ -99,7 +106,10 @@ class VoxelWorld_slab {
             // voxel 0 is sky (empty) so for UVs we start at 0
             const uvVoxel = voxel - 1;
             // There is a voxel here but do we need faces for it?
-            for (const { dir, corners, uvRow } of VoxelWorld_slab.faces) {
+            // if (slab_toggle) full_height = 1;
+            // else full_height = 0.5;
+
+            for (const { dir, corners, uvRow } of VoxelWorld.faces) {
               const neighbor = this.getVoxel(
                 voxelX + dir[0],
                 voxelY + dir[1],
@@ -124,7 +134,6 @@ class VoxelWorld_slab {
         }
       }
     }
-
     return {
       positions,
       normals,
@@ -132,6 +141,12 @@ class VoxelWorld_slab {
       indices,
     };
   }
+
+
+
+
+  //
+
   intersectRay(start, end) {
     let dx = end.x - start.x;
     let dy = end.y - start.y;
@@ -218,16 +233,19 @@ class VoxelWorld_slab {
 }
 
 
+
+
+
 /*  texture atlas setting */
+VoxelWorld.faces = [
 
-VoxelWorld_slab.faces = [
   { // left
     uvRow: 0,
     dir: [-1, 0, 0,],
     corners: [
-      { pos: [0, 1, 0], uv: [0, 1], },
+      { pos: [0, full_height, 0], uv: [0, 1], },
       { pos: [0, 0, 0], uv: [0, 0], },
-      { pos: [0, 1, 1], uv: [1, 1], },
+      { pos: [0, full_height, 1], uv: [1, 1], },
       { pos: [0, 0, 1], uv: [1, 0], },
     ],
   },
@@ -235,9 +253,9 @@ VoxelWorld_slab.faces = [
     uvRow: 0,
     dir: [1, 0, 0,],
     corners: [
-      { pos: [1, 1, 1], uv: [0, 1], },
+      { pos: [1, full_height, 1], uv: [0, 1], },
       { pos: [1, 0, 1], uv: [0, 0], },
-      { pos: [1, 1, 0], uv: [1, 1], },
+      { pos: [1, full_height, 0], uv: [1, 1], },
       { pos: [1, 0, 0], uv: [1, 0], },
     ],
   },
@@ -255,10 +273,10 @@ VoxelWorld_slab.faces = [
     uvRow: 2,
     dir: [0, 1, 0,],
     corners: [
-      { pos: [0, 1, 1], uv: [1, 1], },
-      { pos: [1, 1, 1], uv: [0, 1], },
-      { pos: [0, 1, 0], uv: [1, 0], },
-      { pos: [1, 1, 0], uv: [0, 0], },
+      { pos: [0, full_height, 1], uv: [1, 1], },
+      { pos: [1, full_height, 1], uv: [0, 1], },
+      { pos: [0, full_height, 0], uv: [1, 0], },
+      { pos: [1, full_height, 0], uv: [0, 0], },
     ],
   },
   { // back
@@ -267,8 +285,8 @@ VoxelWorld_slab.faces = [
     corners: [
       { pos: [1, 0, 0], uv: [0, 0], },
       { pos: [0, 0, 0], uv: [1, 0], },
-      { pos: [1, 1, 0], uv: [0, 1], },
-      { pos: [0, 1, 0], uv: [1, 1], },
+      { pos: [1, full_height, 0], uv: [0, 1], },
+      { pos: [0, full_height, 0], uv: [1, 1], },
     ],
   },
   { // front
@@ -277,75 +295,8 @@ VoxelWorld_slab.faces = [
     corners: [
       { pos: [0, 0, 1], uv: [0, 0], },
       { pos: [1, 0, 1], uv: [1, 0], },
-      { pos: [0, 1, 1], uv: [0, 1], },
-      { pos: [1, 1, 1], uv: [1, 1], },
-    ],
-  },
-];
-
-
-const slab_height = 0.5;
-
-
-VoxelWorld_slab.faces = [
-  { // left
-    uvRow: 0,
-    dir: [-1, 0, 0,],
-    corners: [
-      { pos: [0, slab_height, 0], uv: [0, 1], },
-      { pos: [0, 0, 0], uv: [0, 0], },
-      { pos: [0, slab_height, 1], uv: [1, 1], },
-      { pos: [0, 0, 1], uv: [1, 0], },
-    ],
-  },
-  { // right
-    uvRow: 0,
-    dir: [1, 0, 0,],
-    corners: [
-      { pos: [1, slab_height, 1], uv: [0, 1], },
-      { pos: [1, 0, 1], uv: [0, 0], },
-      { pos: [1, slab_height, 0], uv: [1, 1], },
-      { pos: [1, 0, 0], uv: [1, 0], },
-    ],
-  },
-  { // bottom
-    uvRow: 1,
-    dir: [0, -1, 0,],
-    corners: [
-      { pos: [1, 0, 1], uv: [1, 0], },
-      { pos: [0, 0, 1], uv: [0, 0], },
-      { pos: [1, 0, 0], uv: [1, 1], },
-      { pos: [0, 0, 0], uv: [0, 1], },
-    ],
-  },
-  { // top
-    uvRow: 2,
-    dir: [0, 1, 0,],
-    corners: [
-      { pos: [0, slab_height, 1], uv: [1, 1], },
-      { pos: [1, slab_height, 1], uv: [0, 1], },
-      { pos: [0, slab_height, 0], uv: [1, 0], },
-      { pos: [1, slab_height, 0], uv: [0, 0], },
-    ],
-  },
-  { // back
-    uvRow: 0,
-    dir: [0, 0, -1,],
-    corners: [
-      { pos: [1, 0, 0], uv: [0, 0], },
-      { pos: [0, 0, 0], uv: [1, 0], },
-      { pos: [1, slab_height, 0], uv: [0, 1], },
-      { pos: [0, slab_height, 0], uv: [1, 1], },
-    ],
-  },
-  { // front
-    uvRow: 0,
-    dir: [0, 0, 1,],
-    corners: [
-      { pos: [0, 0, 1], uv: [0, 0], },
-      { pos: [1, 0, 1], uv: [1, 0], },
-      { pos: [0, slab_height, 1], uv: [0, 1], },
-      { pos: [1, slab_height, 1], uv: [1, 1], },
+      { pos: [0, full_height, 1], uv: [0, 1], },
+      { pos: [1, full_height, 1], uv: [1, 1], },
     ],
   },
 ];
@@ -419,6 +370,24 @@ function main() {
   /* time slider 관련 코드 */
 
   var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
+
+  document.getElementById("slab_toggle_button").onclick = function () {
+
+    //     let slab_toggle = true; //true = 전체블럭, false = 반블럭
+    // let full_height = 1;
+
+    // if (slab_toggle) full_height = 1;
+    // else full_height = 0.5;
+
+
+    slab_toggle = !slab_toggle;
+    console.log('slab_toggle:', slab_toggle);
+
+    if (slab_toggle) full_height = 1;
+    else full_height = 0.5;
+
+    render();
+  }
 
   document.getElementById("timeslider").onchange = function () {
     x = event.srcElement.value;
@@ -582,7 +551,7 @@ function main() {
   const tileSize = 1024;
   const tileTextureWidth = 16384;
   const tileTextureHeight = 4096;
-  const world = new VoxelWorld_slab({
+  const world = new VoxelWorld({
     cellSize,
     tileSize,
     tileTextureWidth,
@@ -676,9 +645,6 @@ function main() {
 
       }
     }
-  }
-  function randInt(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
   }
 
   updateVoxelGeometry(0, 0, 0);  // 0,0,0 will generate

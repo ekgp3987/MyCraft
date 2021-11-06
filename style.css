@@ -43,29 +43,29 @@ body {
   display: inline-block;
 }
 
-#ui input[type=radio] {
-width: 0;
-height: 0;
-display: none;
+#ui input[type="radio"] {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
-#ui input[type=radio] + label {
-position: relative;
-background-image: url('src/textures/my-texture2.png');
-background-size: 1600% 400%;
-image-rendering: pixelated;
-margin-bottom: 5px;
-width: 64px;
-height: 64px;
-display: inline-block;
+#ui input[type="radio"] + label {
+  position: relative;
+  background-image: url("src/textures/my-texture2.png");
+  background-size: 1600% 400%;
+  image-rendering: pixelated;
+  margin-bottom: 5px;
+  width: 64px;
+  height: 64px;
+  display: inline-block;
 }
 
-#ui input[type=radio]:checked + label {
-outline: 3px solid red;
+#ui input[type="radio"]:checked + label {
+  outline: 3px solid red;
 }
 
 @media (max-width: 600px), (max-height: 600px) {
-  #ui input[type=radio] + label {
+  #ui input[type="radio"] + label {
     width: 32px;
     height: 32px;
   }
@@ -74,35 +74,35 @@ outline: 3px solid red;
 .info {
   position: absolute;
   width: 40vh;
-  margin-top: 1%;;
-  margin-left: 1%;;
+  margin-top: 1%;
+  margin-left: 1%;
   margin-right: 10%;
   background: rgba(0, 0, 0, 0.8);
 }
 
-.info:after{
+.info:after {
   display: block;
   padding-top: 66.66%;
 }
 
-.levelContainer{
+.levelContainer {
   margin: 10%;
 }
 
-#levelText{
+#levelText {
   font-size: 4vh;
   color: white;
 }
 
-#progressBar{
+#progressBar {
   width: 100%;
   background: rgb(51, 48, 48);
 }
-#progsNum{
+#progsNum {
   width: 0%;
   height: 10%;
   background: rgb(240, 234, 149);
-  color:black;
+  color: black;
   text-align: center;
   line-height: 50px;
 }
@@ -110,17 +110,17 @@ outline: 3px solid red;
 .timeinfo {
   position: absolute;
   width: 40vh;
-  margin-top: 15%;
+  margin-top: 20%;
   margin-left: 1%;
   margin-right: 10%;
   background: rgba(0, 0, 0, 0.8);
 }
 
-.timeContainer{
+.timeContainer {
   margin: 10%;
 }
 
-#timeText{
+#timeText {
   padding: 4%;
   font-size: 4vh;
   color: white;
