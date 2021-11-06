@@ -9,9 +9,20 @@ body {
   display: block;
 } */
 
+element {
+  --upper-bg-color: pink;
+  --down-bg-color: blue;
+}
+
+:root {
+  --upper-bg-color: pink;
+  --down-bg-color: blue;
+}
+
 body {
   margin: 0;
   overflow: hidden;
+  background: linear-gradient(var(--upper-bg-color), var(--down-bg-color));
 }
 
 #gl-canvas {
@@ -94,4 +105,23 @@ outline: 3px solid red;
   color:black;
   text-align: center;
   line-height: 50px;
+}
+
+.timeinfo {
+  position: absolute;
+  width: 40vh;
+  margin-top: 15%;
+  margin-left: 1%;
+  margin-right: 10%;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.timeContainer{
+  margin: 10%;
+}
+
+#timeText{
+  padding: 4%;
+  font-size: 4vh;
+  color: white;
 }

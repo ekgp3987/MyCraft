@@ -8,39 +8,39 @@
 let slab_toggle = false;
 
 function slab_toggle_click() {
-  slab_toggle  = !slab_toggle;
-  console.log('slab_toggle:',slab_toggle);
+  slab_toggle = !slab_toggle;
+  console.log('slab_toggle:', slab_toggle);
 }
-			// //추가.
-			// const _keydown = this.keydown.bind( this );
-			// window.addEventListener( 'keydown', _keydown );
+// //추가.
+// const _keydown = this.keydown.bind( this );
+// window.addEventListener( 'keydown', _keydown );
 
-      // this.keydown = function ( event ) {
-      //   switch ( event.code ) {
-      //   case 'KeyT':
-      //       slab_toggle  = !slab_toggle;
-      //       console.log('slab_toggle:',slab_toggle);
-			// 			break;
-      //   }
-      // }
+// this.keydown = function ( event ) {
+//   switch ( event.code ) {
+//   case 'KeyT':
+//       slab_toggle  = !slab_toggle;
+//       console.log('slab_toggle:',slab_toggle);
+// 			break;
+//   }
+// }
 class VoxelWorld_slab {
   constructor(options) {
     this.cellSize = options.cellSize;
     this.tileSize = options.tileSize;
     this.tileTextureWidth = options.tileTextureWidth;
     this.tileTextureHeight = options.tileTextureHeight;
-    const {cellSize} = this;
+    const { cellSize } = this;
     this.cellSliceSize = cellSize * cellSize;
     this.cells = {};
   }
   computeVoxelOffset(x, y, z) {
-    const {cellSize, cellSliceSize} = this;
+    const { cellSize, cellSliceSize } = this;
     const voxelX = THREE.MathUtils.euclideanModulo(x, cellSize) | 0;
     const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
     const voxelZ = THREE.MathUtils.euclideanModulo(z, cellSize) | 0;
     return voxelY * cellSliceSize +
-           voxelZ * cellSize +
-           voxelX;
+      voxelZ * cellSize +
+      voxelX;
   }
   computeCellId(x, y, z) {
     const { cellSize } = this;
@@ -79,7 +79,7 @@ class VoxelWorld_slab {
     return cell[voxelOffset];
   }
   generateGeometryDataForCell(cellX, cellY, cellZ) {
-    const {cellSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
+    const { cellSize, tileSize, tileTextureWidth, tileTextureHeight } = this;
     const positions = [];
     const normals = [];
     const uvs = [];
@@ -99,19 +99,19 @@ class VoxelWorld_slab {
             // voxel 0 is sky (empty) so for UVs we start at 0
             const uvVoxel = voxel - 1;
             // There is a voxel here but do we need faces for it?
-            for (const {dir, corners, uvRow} of VoxelWorld_slab.faces) {
+            for (const { dir, corners, uvRow } of VoxelWorld_slab.faces) {
               const neighbor = this.getVoxel(
-                  voxelX + dir[0],
-                  voxelY + dir[1],
-                  voxelZ + dir[2]);
+                voxelX + dir[0],
+                voxelY + dir[1],
+                voxelZ + dir[2]);
               if (!neighbor) {
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
-                for (const {pos, uv} of corners) {
+                for (const { pos, uv } of corners) {
                   positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
                   normals.push(...dir);
                   uvs.push(
-                        (uvVoxel +   uv[0]) * tileSize / tileTextureWidth,
+                    (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
                     1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
                 }
                 indices.push(
@@ -223,62 +223,62 @@ class VoxelWorld_slab {
 VoxelWorld_slab.faces = [
   { // left
     uvRow: 0,
-    dir: [ -1,  0,  0, ],
+    dir: [-1, 0, 0,],
     corners: [
-      { pos: [ 0, 1, 0 ], uv: [ 0, 1 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 0, 0 ], },
-      { pos: [ 0, 1, 1 ], uv: [ 1, 1 ], },
-      { pos: [ 0, 0, 1 ], uv: [ 1, 0 ], },
+      { pos: [0, 1, 0], uv: [0, 1], },
+      { pos: [0, 0, 0], uv: [0, 0], },
+      { pos: [0, 1, 1], uv: [1, 1], },
+      { pos: [0, 0, 1], uv: [1, 0], },
     ],
   },
   { // right
     uvRow: 0,
-    dir: [  1,  0,  0, ],
+    dir: [1, 0, 0,],
     corners: [
-      { pos: [ 1, 1, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 1, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, 1, 0 ], uv: [ 1, 1 ], },
-      { pos: [ 1, 0, 0 ], uv: [ 1, 0 ], },
+      { pos: [1, 1, 1], uv: [0, 1], },
+      { pos: [1, 0, 1], uv: [0, 0], },
+      { pos: [1, 1, 0], uv: [1, 1], },
+      { pos: [1, 0, 0], uv: [1, 0], },
     ],
   },
   { // bottom
     uvRow: 1,
-    dir: [  0, -1,  0, ],
+    dir: [0, -1, 0,],
     corners: [
-      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
-      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, 0, 0 ], uv: [ 1, 1 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 0, 1 ], },
+      { pos: [1, 0, 1], uv: [1, 0], },
+      { pos: [0, 0, 1], uv: [0, 0], },
+      { pos: [1, 0, 0], uv: [1, 1], },
+      { pos: [0, 0, 0], uv: [0, 1], },
     ],
   },
   { // top
     uvRow: 2,
-    dir: [  0,  1,  0, ],
+    dir: [0, 1, 0,],
     corners: [
-      { pos: [ 0, 1, 1 ], uv: [ 1, 1 ], },
-      { pos: [ 1, 1, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 0, 1, 0 ], uv: [ 1, 0 ], },
-      { pos: [ 1, 1, 0 ], uv: [ 0, 0 ], },
+      { pos: [0, 1, 1], uv: [1, 1], },
+      { pos: [1, 1, 1], uv: [0, 1], },
+      { pos: [0, 1, 0], uv: [1, 0], },
+      { pos: [1, 1, 0], uv: [0, 0], },
     ],
   },
   { // back
     uvRow: 0,
-    dir: [  0,  0, -1, ],
+    dir: [0, 0, -1,],
     corners: [
-      { pos: [ 1, 0, 0 ], uv: [ 0, 0 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 1, 0 ], },
-      { pos: [ 1, 1, 0 ], uv: [ 0, 1 ], },
-      { pos: [ 0, 1, 0 ], uv: [ 1, 1 ], },
+      { pos: [1, 0, 0], uv: [0, 0], },
+      { pos: [0, 0, 0], uv: [1, 0], },
+      { pos: [1, 1, 0], uv: [0, 1], },
+      { pos: [0, 1, 0], uv: [1, 1], },
     ],
   },
   { // front
     uvRow: 0,
-    dir: [  0,  0,  1, ],
+    dir: [0, 0, 1,],
     corners: [
-      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
-      { pos: [ 0, 1, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 1, 1, 1 ], uv: [ 1, 1 ], },
+      { pos: [0, 0, 1], uv: [0, 0], },
+      { pos: [1, 0, 1], uv: [1, 0], },
+      { pos: [0, 1, 1], uv: [0, 1], },
+      { pos: [1, 1, 1], uv: [1, 1], },
     ],
   },
 ];
@@ -290,62 +290,62 @@ const slab_height = 0.5;
 VoxelWorld_slab.faces = [
   { // left
     uvRow: 0,
-    dir: [ -1,  0,  0, ],
+    dir: [-1, 0, 0,],
     corners: [
-      { pos: [ 0, slab_height, 0 ], uv: [ 0, 1 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 0, 0 ], },
-      { pos: [ 0, slab_height, 1 ], uv: [ 1, 1 ], },
-      { pos: [ 0, 0, 1 ], uv: [ 1, 0 ], },
+      { pos: [0, slab_height, 0], uv: [0, 1], },
+      { pos: [0, 0, 0], uv: [0, 0], },
+      { pos: [0, slab_height, 1], uv: [1, 1], },
+      { pos: [0, 0, 1], uv: [1, 0], },
     ],
   },
   { // right
     uvRow: 0,
-    dir: [  1,  0,  0, ],
+    dir: [1, 0, 0,],
     corners: [
-      { pos: [ 1, slab_height, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 1, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, slab_height, 0 ], uv: [ 1, 1 ], },
-      { pos: [ 1, 0, 0 ], uv: [ 1, 0 ], },
+      { pos: [1, slab_height, 1], uv: [0, 1], },
+      { pos: [1, 0, 1], uv: [0, 0], },
+      { pos: [1, slab_height, 0], uv: [1, 1], },
+      { pos: [1, 0, 0], uv: [1, 0], },
     ],
   },
   { // bottom
     uvRow: 1,
-    dir: [  0, -1,  0, ],
+    dir: [0, -1, 0,],
     corners: [
-      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
-      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, 0, 0 ], uv: [ 1, 1 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 0, 1 ], },
+      { pos: [1, 0, 1], uv: [1, 0], },
+      { pos: [0, 0, 1], uv: [0, 0], },
+      { pos: [1, 0, 0], uv: [1, 1], },
+      { pos: [0, 0, 0], uv: [0, 1], },
     ],
   },
   { // top
     uvRow: 2,
-    dir: [  0,  1,  0, ],
+    dir: [0, 1, 0,],
     corners: [
-      { pos: [ 0, slab_height, 1 ], uv: [ 1, 1 ], },
-      { pos: [ 1, slab_height, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 0, slab_height, 0 ], uv: [ 1, 0 ], },
-      { pos: [ 1, slab_height, 0 ], uv: [ 0, 0 ], },
+      { pos: [0, slab_height, 1], uv: [1, 1], },
+      { pos: [1, slab_height, 1], uv: [0, 1], },
+      { pos: [0, slab_height, 0], uv: [1, 0], },
+      { pos: [1, slab_height, 0], uv: [0, 0], },
     ],
   },
   { // back
     uvRow: 0,
-    dir: [  0,  0, -1, ],
+    dir: [0, 0, -1,],
     corners: [
-      { pos: [ 1, 0, 0 ], uv: [ 0, 0 ], },
-      { pos: [ 0, 0, 0 ], uv: [ 1, 0 ], },
-      { pos: [ 1, slab_height, 0 ], uv: [ 0, 1 ], },
-      { pos: [ 0, slab_height, 0 ], uv: [ 1, 1 ], },
+      { pos: [1, 0, 0], uv: [0, 0], },
+      { pos: [0, 0, 0], uv: [1, 0], },
+      { pos: [1, slab_height, 0], uv: [0, 1], },
+      { pos: [0, slab_height, 0], uv: [1, 1], },
     ],
   },
   { // front
     uvRow: 0,
-    dir: [  0,  0,  1, ],
+    dir: [0, 0, 1,],
     corners: [
-      { pos: [ 0, 0, 1 ], uv: [ 0, 0 ], },
-      { pos: [ 1, 0, 1 ], uv: [ 1, 0 ], },
-      { pos: [ 0, slab_height, 1 ], uv: [ 0, 1 ], },
-      { pos: [ 1, slab_height, 1 ], uv: [ 1, 1 ], },
+      { pos: [0, 0, 1], uv: [0, 0], },
+      { pos: [1, 0, 1], uv: [1, 0], },
+      { pos: [0, slab_height, 1], uv: [0, 1], },
+      { pos: [1, slab_height, 1], uv: [1, 1], },
     ],
   },
 ];
@@ -354,14 +354,14 @@ VoxelWorld_slab.faces = [
 
 function main() {
   const canvas = document.querySelector('#gl-canvas');
-  const renderer = new THREE.WebGLRenderer({canvas});
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
-  for(var i = 5; i <= 16; i++){
-    var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+  for (var i = 5; i <= 16; i++) {
+    var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
     // item.style.display = "none";  // 커서까지 없어짐
-    item.style.visibility = "hidden"; 
+    item.style.visibility = "hidden";
   }
 
   const cellSize = 50;
@@ -374,12 +374,12 @@ function main() {
   //camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
   camera.position.set(20, 10, 20);//카메라 시작 좌표
-   //orbitcontrol
+  //orbitcontrol
   const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(20, 10, 40); //orbit control target 좌표
   //controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
   controls.update();
-  
+
 
   /*camera.position.set(25, 15, 80);//시작 좌표
   const controls = new THREE.FlyControls(camera, canvas);
@@ -391,112 +391,191 @@ function main() {
 
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('skyblue');
+  renderer.setClearColor(0x000000, 0); // the default
 
   /* AmbientLight 자연광 */
   const color = 0xFFFFFF;
-  var intensity = 0.5;
-  var light = new THREE.AmbientLight(color, intensity);
-  scene.add(light);
+  var ambientlight = new THREE.AmbientLight(color, 0.7);
+  scene.add(ambientlight);
 
-  function addLight(x, y, z) {
-    // const color = 0xFFFFFF;
-    intensity = 0.5;
-    light = new THREE.DirectionalLight(color, intensity);
-    // shadow & shadow camera setting
-    light.castShadow = true;
-    light.shadow.bias = -0.01;  // 줄무늬 안생기게
-    light.shadowDarkness = 0.5;
-    light.shadowCameraNear = 2;
-    light.shadowCameraFar = 70;
-    light.shadowCameraLeft = -30;
-    light.shadowCameraRight = 30;
-    light.shadowCameraTop = 30;
-    light.shadowCameraBottom = -30;
-    light.position.set(x, y, z);
-    // 빛이 비추는 방향 target
-    light.target.position.set(25, 0, 25);
-    scene.add(light, light.target);
+  /* DirectionalLight 태양 */
+  light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
+  // shadow & shadow camera setting
+  light.castShadow = true;
+  light.shadow.bias = -0.01;  // 줄무늬 안생기게
+  light.shadowDarkness = 0.5;
+  light.shadowCameraNear = 2;
+  light.shadowCameraFar = 80;
+  light.shadowCameraLeft = -30;
+  light.shadowCameraRight = 30;
+  light.shadowCameraTop = 30;
+  light.shadowCameraBottom = -30;
 
-    /* 빛 위치를 표시해줌 */
-    const helper = new THREE.DirectionalLightHelper(light);
-    scene.add(helper);
-
-    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
-    scene.add(cameraHelper);
-  }
   // 빛의 시작 지점
-  addLight(50, 30, 25);
-  // addLight( 1, -1, -2);
+  var x = 0;
 
-  function updateLight() {
-    light.target.updateMatrixWorld();
-    helper.update();
-  }
-  
-  /* slider 관련 코드 -- 실행 X
+  light.position.set(-25, 30, 25);
 
-  var setx = document.getElementById("setx");
-  setx.addEventListener("input", moveX);
+  /* time slider 관련 코드 */
 
-  function moveX()
-  
-  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
-  class ColorGUIHelper {
-    constructor(object, prop) {
-      this.object = object;
-      this.prop = prop;
+  var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
+
+  document.getElementById("timeslider").onchange = function () {
+    x = event.srcElement.value;
+
+    if (x < -10) {
+      document.body.style.setProperty("--upper-bg-color", 'pink'); // default
+      document.body.style.setProperty("--down-bg-color", 'blue');
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
-    get value() {
-      return `#${this.object[this.prop].getHexString()}`;
+    else if (x < 0) {
+      document.body.style.setProperty("--upper-bg-color", '#FF99FF'); // 연한 핑크
+      document.body.style.setProperty("--down-bg-color", '#0066FF');  // 연한 파랑
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
-    set value(hexString) {
-      this.object[this.prop].set(hexString);
+    else if (x < 10) {
+      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
+      document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xAAAAFF);
     }
-  }
+    else if (x < 40) {
+      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   // 파랑
+      document.body.style.setProperty("--down-bg-color", '#66CCFF');    // 파랑
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFFFFF);
+    }
+    else if (x < 50) {
+      document.body.style.setProperty("--upper-bg-color", '#FF9966');   // 자몽
+      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     // 희미한 파랑
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
 
-  function makeXYZGUI(gui, vector3, name, onChangeFn) {
-    const folder = gui.addFolder(name);
-    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
-    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
-    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
-    folder.open();
-  }
+    }
+    else if (x < 60) {
+      document.body.style.setProperty("--upper-bg-color", '#FF9933');  // 오렌지
+      document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
+    }
+    else if (x < 76) {
+      document.body.style.setProperty("--upper-bg-color", '#FF6600'); // 오렌지
+      document.body.style.setProperty("--down-bg-color", '#FFFF99');  // 연노랑 
+      if (nightbuttonpressed)
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
+    }
 
-  const gui = new dat.GUI();
-  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-  
-  gui.add(light, 'intensity', 0, 2, 0.01);
-  gui.add(light, 'distance', 0, 40).onChange(updateLight);
-  
-  makeXYZGUI(gui, light.position, 'position', updateLight);
+    light.position.set(x, 30, 25);
+    // console.log(x);
+    render();
+  };
+
+  // 빛이 비추는 방향 target
+  light.target.position.set(25, 0, 25);
+  scene.add(light, light.target);
+
+  /* 빛 위치를 표시해줌 
+  const helper = new THREE.DirectionalLightHelper(light);
+  scene.add(helper);
+
+  const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+  scene.add(cameraHelper);
   */
 
   /* 배경에 구름 */
   function createClouds(radius, segments) {
     // Mesh
     return new THREE.Mesh(
-        // geometry
-        new THREE.SphereGeometry(radius, segments, segments),
-        // material
-        new THREE.MeshBasicMaterial({
-            map:    THREE.ImageUtils.loadTexture('src/images/fair_clouds_4k.png'),
-            side:   THREE.BackSide,
-            transparent:    true
-        })
+      // geometry
+      new THREE.SphereGeometry(radius, segments, segments),
+      // material
+      new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('src/images/fair_clouds_4k.png'),
+        side: THREE.BackSide,
+        transparent: true
+      })
     );
   }
-  
-  /* 큰 구 생성 */
-  var clouds = createClouds(80, 64); 
+
+  /* Create stars */
+  function createStars(radius, segments) {
+    // Mesh
+    return new THREE.Mesh(
+      // geometry
+      new THREE.SphereGeometry(radius, segments, segments),
+      // material
+      new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('src/images/galaxy_starfield.png'),
+        side: THREE.BackSide
+      })
+    );
+  }
+
+  /* clouds & 큰 구 생성 */
+  var clouds = createClouds(80, 64);
   /* 구 위치 조정 */
-  clouds.position.set( 25, 20, 30 );
+  clouds.position.set(25, 20, 30);
   scene.add(clouds);
 
+  /* stars 생성 */
+  var stars = createStars(80, 64);
+  stars.position.set(25, 20, 30);
+
+  /* night button */
+  // nightbuttonpressed  1 -> 밤,  0 -> 낮
+  document.getElementById("nightbutton").onclick = function () {
+    console.log(nightbuttonpressed);
+
+    if (nightbuttonpressed)   // 밤일때는 낮으로
+      nightbuttonpressed = 0;
+    else                      // 낮일때는 밤으로
+      nightbuttonpressed = 1;
+
+    // 밤으로 바뀌었을때
+    if (nightbuttonpressed) {
+
+      scene.remove(clouds);
+      scene.add(stars);
+
+      ambientlight.intensity = 0.2;
+
+      scene.add(ambientlight);
+    }
+
+    // 낮으로 바뀌었을때 
+    if (!nightbuttonpressed) {
+
+      scene.remove(stars);
+      scene.add(clouds);
+
+      ambientlight.intensity = 0.7
+
+      scene.add(ambientlight);
+    }
+
+    render();
+  }
+
   // bring textuers
-  /*  bring textuers */  
+  /*  bring textuers */
   const loader = new THREE.TextureLoader();
-  let texture = loader.load(src="src/textures/texture_test.png"); //직접 지정
+  let texture = loader.load(src = "src/textures/texture_test.png"); //직접 지정
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
@@ -532,7 +611,7 @@ function main() {
     let mesh = cellIdToMesh[cellId];
     const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
 
-    const {positions, normals, uvs, indices} = world.generateGeometryDataForCell(cellX, cellY, cellZ);
+    const { positions, normals, uvs, indices } = world.generateGeometryDataForCell(cellX, cellY, cellZ);
     const positionNumComponents = 3;
     geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
     const normalNumComponents = 3;
@@ -555,13 +634,13 @@ function main() {
   }
 
   const neighborOffsets = [
-    [ 0,  0,  0], // self
-    [-1,  0,  0], // left
-    [ 1,  0,  0], // right
-    [ 0, -1,  0], // down
-    [ 0,  1,  0], // up
-    [ 0,  0, -1], // back
-    [ 0,  0,  1], // front
+    [0, 0, 0], // self
+    [-1, 0, 0], // left
+    [1, 0, 0], // right
+    [0, -1, 0], // down
+    [0, 1, 0], // up
+    [0, 0, -1], // back
+    [0, 0, 1], // front
   ];
   function updateVoxelGeometry(x, y, z) {
     const updatedCellIds = {};
@@ -576,7 +655,7 @@ function main() {
       }
     }
   }
-  
+
   // 플랫폼 생성
   for (let y = 0; y < cellSize; ++y) {
     for (let z = 0; z < cellSize; ++z) {
@@ -593,8 +672,8 @@ function main() {
         //   texture = loader.load(src="src/textures/brick_wall_001_1k.png"); //직접 지정
         // }
         // world.setVoxel(x, y, z, 1); //1번째 texture 사용
-        
-        
+
+
       }
     }
   }
@@ -602,7 +681,7 @@ function main() {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
-  updateVoxelGeometry(0,0,0);  // 0,0,0 will generate
+  updateVoxelGeometry(0, 0, 0);  // 0,0,0 will generate
 
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
@@ -635,11 +714,11 @@ function main() {
 
   let currentVoxel = 0;
   let currentId;
-  
+
   document.querySelectorAll('#ui .tiles input[type=radio][name=voxel]').forEach((elem) => {
     elem.addEventListener('click', allowUncheck);
   });
-  
+
   function allowUncheck() {
     if (this.id === currentId) {
       this.checked = false;
@@ -654,11 +733,11 @@ function main() {
   function getCanvasRelativePosition(event) {
     const rect = canvas.getBoundingClientRect();
     return {
-      x: (event.clientX - rect.left) * canvas.width  / rect.width,
-      y: (event.clientY - rect.top ) * canvas.height / rect.height,
+      x: (event.clientX - rect.left) * canvas.width / rect.width,
+      y: (event.clientY - rect.top) * canvas.height / rect.height,
     };
   }
-  
+
   let placeVoxelCount = 0;
   let userlevel = 0;
   let width = 0;
@@ -669,14 +748,14 @@ function main() {
 
   function placeVoxel(event) {
     const pos = getCanvasRelativePosition(event);
-    const x = (pos.x / canvas.width ) *  2 - 1;
+    const x = (pos.x / canvas.width) * 2 - 1;
     const y = (pos.y / canvas.height) * -2 + 1;  // Y축을 뒤집었음
-  
+
     const start = new THREE.Vector3();
     const end = new THREE.Vector3();
     start.setFromMatrixPosition(camera.matrixWorld);
     end.set(x, y, 1).unproject(camera);
-  
+
     const intersection = world.intersectRay(start, end);
     if (intersection) {
 
@@ -684,9 +763,11 @@ function main() {
       event = event || window.event;
 
       if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isRightButton = event.which == 3; 
+        isRightButton = event.which == 3;
       else if ("button" in event)  // IE, Opera 
-        isRightButton = event.button == 2; 
+        isRightButton = event.button == 2;
+
+      if (isRightButton == 1 && currentVoxel == 0) return;
 
       const voxelId = isRightButton ? currentVoxel : 0;
       /**
@@ -699,103 +780,103 @@ function main() {
         return v + intersection.normal[ndx] * (voxelId > 0 ? 0.5 : -0.5);
       });
       //범위 벗어나면 생성 못함
-      if((pos[0] > 0 && pos[0] < 50) && (pos[2] > 0 && pos[2] < 50)){
+      if ((pos[0] > 0 && pos[0] < 50) && (pos[2] > 0 && pos[2] < 50)) {
         world.setVoxel(...pos, voxelId);
         updateVoxelGeometry(...pos);
         requestRenderIfNotRequested();
 
 
 
-         // 레벨 관련 부분
-         if(voxelId!=0){ // 블럭 생성시만
-      
+        // 레벨 관련 부분
+        if (voxelId != 0) { // 블럭 생성시만
+
           placeVoxelCount += levelWeight;
           console.log("placeVoxelCount:", placeVoxelCount);
           placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
           moveProgress();
-          if(placeVoxelCount % 1 == 0){
+          if (placeVoxelCount % 1 == 0) {
             // userlevel += 1;
             levelup();
-          
+
           }
         }
 
-        
+
       }
 
 
-      
 
-        
+
+
     }
   }
 
-  
-  
+
+
   const mouse = {
     x: 0,
     y: 0,
   };
-  
 
 
-  function levelup(){
+
+  function levelup() {
     userlevel += 1;
     console.log("user level up!! current level:", userlevel);
     level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
 
-    switch(userlevel){
+    switch (userlevel) {
       case 1:
-        for(var i = 5; i <= 8; i++){
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+        for (var i = 5; i <= 8; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
           // item.style.display = "block"; 
-          item.style.visibility = "visible"; 
+          item.style.visibility = "visible";
         }
         break;
       case 2:
-        for(var i = 9; i <= 12; i++){
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+        for (var i = 9; i <= 12; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
           // item.style.display = "block"; 
-          item.style.visibility = "visible"; 
+          item.style.visibility = "visible";
         }
         break;
       case 3:
-        for(var i = 13; i <= 16; i++){
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel'+i+']+ label');
+        for (var i = 13; i <= 16; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
           // item.style.display = "block"; 
-          item.style.visibility = "visible"; 
+          item.style.visibility = "visible";
         }
         break;
       default:
         break;
     }
-    
-    
+
+
 
   }
 
-  function moveProgress(){
-    const ele=document.getElementById('progsNum');
+  function moveProgress() {
+    const ele = document.getElementById('progsNum');
 
-    
-        if(width>=90){
-            width = 0;
-            ele.style.width=width+"%";
-            ele.innerHTML=width+"%";
-        }else{
-            width = width + levelWeight*100;
-            ele.style.width=width+"%";
-            ele.innerHTML=width+"%";
-        } 
 
-      console.log('width:', width);
-}
-  
+    if (width >= 90) {
+      width = 0;
+      ele.style.width = width + "%";
+      ele.innerHTML = width + "%";
+    } else {
+      width = width + levelWeight * 100;
+      ele.style.width = width + "%";
+      ele.innerHTML = width + "%";
+    }
 
+    console.log('width:', width);
+  }
 
 
 
-  
+
+
+
   function recordStartPosition(event) {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
