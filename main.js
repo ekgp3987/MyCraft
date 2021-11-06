@@ -393,6 +393,7 @@ function main() {
 
     light.position.set(x, 30, 25);
     // console.log(x);
+    render();
   };
 
   // 빛이 비추는 방향 target
@@ -477,7 +478,7 @@ function main() {
       
       scene.add(ambientlight);
     }
-    
+  
   }
 
   // bring textuers
