@@ -298,21 +298,15 @@ function main() {
 
 
   const scene = new THREE.Scene();
-  // scene.background = new THREE.Color('skyblue');
   renderer.setClearColor( 0x000000, 0 ); // the default
-
-  var stars = createStars(80, 64);
-  stars.position.set( 25, 20, 30 );
 
   /* AmbientLight 자연광 */
   const color = 0xFFFFFF;
-  var intensity = 0.5;
-  var ambientlight = new THREE.AmbientLight(color, intensity);
+  var ambientlight = new THREE.AmbientLight(color, 0.7);
   scene.add(ambientlight);
 
   /* DirectionalLight 태양 */
-  intensity = 0.7;
-  var light = new THREE.DirectionalLight(0xFFAAAA, intensity);
+  light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
   // shadow & shadow camera setting
   light.castShadow = true;
   light.shadow.bias = -0.01;  // 줄무늬 안생기게
@@ -327,53 +321,77 @@ function main() {
   // 빛의 시작 지점
   var x = 0;
 
-  light.position.set(75, 30, 25);
+  light.position.set(-25, 30, 25);
 
   /* time slider 관련 코드 */
+
+  var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
+
   document.getElementById("timeslider").onchange = function () {
-    scene.dispose(light, light.target);
-    scene.dispose(stars);
+    // scene.dispose(light, light.target);
+    // scene.dispose(stars);
     x = event.srcElement.value;
 
-    light.position.set(x, 30, 25);
     if (x < -10) {
       document.body.style.setProperty("--upper-bg-color", 'pink' ); // default
       document.body.style.setProperty("--down-bg-color", 'blue' );  
-      light.color.setHex(0xFFAAAA);
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
     else if (x < 0) {
       document.body.style.setProperty("--upper-bg-color", '#FF99FF' ); // 연한 핑크
       document.body.style.setProperty("--down-bg-color", '#0066FF' );  // 연한 파랑
-      light.color.setHex(0xFFAAAA);
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
     else if (x < 10) {
       document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
       document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
-      light.color.setHex(0xAAAAFF);
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xAAAAFF);
     }
     else if (x < 40) {
-      document.body.style.setProperty("--upper-bg-color", '#66CCFF');   // 파랑
-      document.body.style.setProperty("--down-bg-color", '#99CCFF');    // 파랑
-      light.color.setHex(0xFFFFFF);
+      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   // 파랑
+      document.body.style.setProperty("--down-bg-color", '#66CCFF');    // 파랑
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFFFFF);
     }
     else if (x < 50) {
-      document.body.style.setProperty("--upper-bg-color", '#CCFFFF');   // 희미한 파랑
-      document.body.style.setProperty("--down-bg-color", '#FF9966');     // 자몽
-      light.color.setHex(0XFFCCAA);
+      document.body.style.setProperty("--upper-bg-color", '#FF9966');   // 자몽
+      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     // 희미한 파랑
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
       
     }
     else if (x < 60) {
-      document.body.style.setProperty("--upper-bg-color", 'orange');  // 오렌지
+      document.body.style.setProperty("--upper-bg-color", '#FF9933');  // 오렌지
       document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
-      light.color.setHex(0XFFCCAA);
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
     }
     else if (x < 76) {
-      document.body.style.setProperty("--upper-bg-color", '#FFFF99'); // 연노랑
-      document.body.style.setProperty("--down-bg-color", '#FF6600');  // 오렌지
-      light.color.setHex(0XFFCCAA);
+      document.body.style.setProperty("--upper-bg-color", '#FF6600'); // 오렌지
+      document.body.style.setProperty("--down-bg-color", '#FFFF99');  // 연노랑 
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
     }
-    
-    console.log(x);
+
+    light.position.set(x, 30, 25);
+    // console.log(x);
   };
 
   // 빛이 비추는 방향 target
@@ -417,25 +435,48 @@ function main() {
     );
 }
   
-  /* 큰 구 생성 */
+  /* clouds & 큰 구 생성 */
   var clouds = createClouds(80, 64); 
   /* 구 위치 조정 */
   clouds.position.set( 25, 20, 30 );
   scene.add(clouds);
 
+  /* stars 생성 */
+  var stars = createStars(80, 64);
+  stars.position.set( 25, 20, 30 );
+
   /* night button */
-  var buttonpressed = 0;
+  // nightbuttonpressed  1 -> 밤,  0 -> 낮
   document.getElementById("nightbutton").onclick = function () {
-    buttonpressed = 1;
-    ambientlight.intensity = 0.2
-    scene.dispose(ambientlight);
+    console.log(nightbuttonpressed);
 
-    scene.remove(clouds);
-    scene.add(stars);
+    if (nightbuttonpressed)   // 밤일때는 낮으로
+      nightbuttonpressed = 0;
+    else                      // 낮일때는 밤으로
+      nightbuttonpressed = 1;
+    
+    // 밤으로 바뀌었을때
+    if (nightbuttonpressed) {
 
-    intensity = 0.2;
-    scene.add(ambientlight);
+      scene.remove(clouds);
+      scene.add(stars);
 
+      ambientlight.intensity = 0.2;
+
+      scene.add(ambientlight);
+    }
+  
+    // 낮으로 바뀌었을때 
+    if (!nightbuttonpressed) {
+
+      scene.remove(stars);
+      scene.add(clouds);
+
+      ambientlight.intensity = 0.7
+      
+      scene.add(ambientlight);
+    }
+    
   }
 
   // bring textuers
