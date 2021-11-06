@@ -328,8 +328,6 @@ function main() {
   var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
 
   document.getElementById("timeslider").onchange = function () {
-    // scene.dispose(light, light.target);
-    // scene.dispose(stars);
     x = event.srcElement.value;
 
     if (x < -10) {
