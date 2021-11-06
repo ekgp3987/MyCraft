@@ -264,7 +264,7 @@ VoxelWorld.faces = [
 
 function main() {
   const canvas = document.querySelector('#gl-canvas');
-  const renderer = new THREE.WebGLRenderer({canvas});
+  const renderer = new THREE.WebGLRenderer({canvas, alpha: true});
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
@@ -301,85 +301,110 @@ function main() {
 
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('skyblue');
+  renderer.setClearColor( 0x000000, 0 ); // the default
 
   /* AmbientLight 자연광 */
   const color = 0xFFFFFF;
-  var intensity = 0.5;
-  var light = new THREE.AmbientLight(color, intensity);
-  scene.add(light);
- 
-  function addLight(x, y, z) {
-    // const color = 0xFFFFFF;
-    intensity = 0.5;
-    light = new THREE.DirectionalLight(color, intensity);
-    // shadow & shadow camera setting
-    light.castShadow = true;
-    light.shadow.bias = -0.01;  // 줄무늬 안생기게
-    light.shadowDarkness = 0.5;
-    light.shadowCameraNear = 2;
-    light.shadowCameraFar = 70;
-    light.shadowCameraLeft = -30;
-    light.shadowCameraRight = 30;
-    light.shadowCameraTop = 30;
-    light.shadowCameraBottom = -30;
-    light.position.set(x, y, z);
-    // 빛이 비추는 방향 target
-    light.target.position.set(25, 0, 25);
-    scene.add(light, light.target);
+  var ambientlight = new THREE.AmbientLight(color, 0.7);
+  scene.add(ambientlight);
 
-    /* 빛 위치를 표시해줌 */
-    const helper = new THREE.DirectionalLightHelper(light);
-    scene.add(helper);
+  /* DirectionalLight 태양 */
+  light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
+  // shadow & shadow camera setting
+  light.castShadow = true;
+  light.shadow.bias = -0.01;  // 줄무늬 안생기게
+  light.shadowDarkness = 0.5;
+  light.shadowCameraNear = 2;
+  light.shadowCameraFar = 80;
+  light.shadowCameraLeft = -30;
+  light.shadowCameraRight = 30;
+  light.shadowCameraTop = 30;
+  light.shadowCameraBottom = -30;
 
-    const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
-    scene.add(cameraHelper);
-  }
   // 빛의 시작 지점
-  addLight(50, 30, 25);
-  // addLight( 1, -1, -2);
+  var x = 0;
 
-  function updateLight() {
-    light.target.updateMatrixWorld();
-    helper.update();
-  }
-  
-  /* slider 관련 코드 -- 실행 X
+  light.position.set(-25, 30, 25);
 
-  var setx = document.getElementById("setx");
-  setx.addEventListener("input", moveX);
+  /* time slider 관련 코드 */
 
-  function moveX()
-  
-  // 빛을 x, y, z 축으로 움직임 - x축을 움직이는 것을 기준으로 만들기 
-  class ColorGUIHelper {
-    constructor(object, prop) {
-      this.object = object;
-      this.prop = prop;
+  var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
+
+  document.getElementById("timeslider").onchange = function () {
+    x = event.srcElement.value;
+
+    if (x < -10) {
+      document.body.style.setProperty("--upper-bg-color", 'pink' ); // default
+      document.body.style.setProperty("--down-bg-color", 'blue' );  
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
-    get value() {
-      return `#${this.object[this.prop].getHexString()}`;
+    else if (x < 0) {
+      document.body.style.setProperty("--upper-bg-color", '#FF99FF' ); // 연한 핑크
+      document.body.style.setProperty("--down-bg-color", '#0066FF' );  // 연한 파랑
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFAAAA);
     }
-    set value(hexString) {
-      this.object[this.prop].set(hexString);
+    else if (x < 10) {
+      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
+      document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xAAAAFF);
     }
-  }
+    else if (x < 40) {
+      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   // 파랑
+      document.body.style.setProperty("--down-bg-color", '#66CCFF');    // 파랑
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0xFFFFFF);
+    }
+    else if (x < 50) {
+      document.body.style.setProperty("--upper-bg-color", '#FF9966');   // 자몽
+      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     // 희미한 파랑
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
+      
+    }
+    else if (x < 60) {
+      document.body.style.setProperty("--upper-bg-color", '#FF9933');  // 오렌지
+      document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
+    }
+    else if (x < 76) {
+      document.body.style.setProperty("--upper-bg-color", '#FF6600'); // 오렌지
+      document.body.style.setProperty("--down-bg-color", '#FFFF99');  // 연노랑 
+      if (nightbuttonpressed) 
+        light.color.setHex(0xFFFFFF);
+      else
+        light.color.setHex(0XFFCCAA);
+    }
 
-  function makeXYZGUI(gui, vector3, name, onChangeFn) {
-    const folder = gui.addFolder(name);
-    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
-    folder.add(vector3, 'y', 0, 10).onChange(onChangeFn);
-    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
-    folder.open();
-  }
+    light.position.set(x, 30, 25);
+    // console.log(x);
+  };
 
-  const gui = new dat.GUI();
-  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-  
-  gui.add(light, 'intensity', 0, 2, 0.01);
-  gui.add(light, 'distance', 0, 40).onChange(updateLight);
-  
-  makeXYZGUI(gui, light.position, 'position', updateLight);
+  // 빛이 비추는 방향 target
+  light.target.position.set(25, 0, 25);
+  scene.add(light, light.target);
+
+  /* 빛 위치를 표시해줌 
+  const helper = new THREE.DirectionalLightHelper(light);
+  scene.add(helper);
+
+  const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+  scene.add(cameraHelper);
   */
 
   /* 배경에 구름 */
@@ -396,12 +421,64 @@ function main() {
         })
     );
   }
+
+  /* Create stars */
+  function createStars(radius, segments) {
+    // Mesh
+    return new THREE.Mesh(
+        // geometry
+        new THREE.SphereGeometry(radius, segments, segments),
+        // material
+        new THREE.MeshBasicMaterial({
+            map:    THREE.ImageUtils.loadTexture('src/images/galaxy_starfield.png'),
+            side:   THREE.BackSide
+        })
+    );
+}
   
-  /* 큰 구 생성 */
+  /* clouds & 큰 구 생성 */
   var clouds = createClouds(80, 64); 
   /* 구 위치 조정 */
   clouds.position.set( 25, 20, 30 );
   scene.add(clouds);
+
+  /* stars 생성 */
+  var stars = createStars(80, 64);
+  stars.position.set( 25, 20, 30 );
+
+  /* night button */
+  // nightbuttonpressed  1 -> 밤,  0 -> 낮
+  document.getElementById("nightbutton").onclick = function () {
+    console.log(nightbuttonpressed);
+
+    if (nightbuttonpressed)   // 밤일때는 낮으로
+      nightbuttonpressed = 0;
+    else                      // 낮일때는 밤으로
+      nightbuttonpressed = 1;
+    
+    // 밤으로 바뀌었을때
+    if (nightbuttonpressed) {
+
+      scene.remove(clouds);
+      scene.add(stars);
+
+      ambientlight.intensity = 0.2;
+
+      scene.add(ambientlight);
+    }
+  
+    // 낮으로 바뀌었을때 
+    if (!nightbuttonpressed) {
+
+      scene.remove(stars);
+      scene.add(clouds);
+
+      ambientlight.intensity = 0.7
+      
+      scene.add(ambientlight);
+    }
+    
+  }
 
   // bring textuers
   /*  bring textuers */  
