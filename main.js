@@ -284,7 +284,7 @@ function main() {
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
-  for (var i = 5; i <= 16; i++) {
+  for (var i = 5; i <= 28; i++) {
     var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
     item.style.visibility = "hidden";
   }
@@ -799,6 +799,24 @@ function main() {
           var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
           item.style.visibility = "visible";
         }
+        break;
+      case 4:
+        for (var i = 17; i <= 20; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
+          item.style.visibility = "visible";
+        }
+        break;
+      case 5:
+        for (var i = 21; i <= 24; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
+          item.style.visibility = "visible";
+        }
+        break;
+      case 6:
+        for (var i = 25; i <= 28; i++) {
+          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
+          item.style.visibility = "visible";
+        };
         break;
       default:
         break;
