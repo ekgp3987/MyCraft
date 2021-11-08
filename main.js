@@ -42,7 +42,7 @@ class VoxelWorld {
   }
   setVoxel(x, y, z, v) {
     let cell = this.getCellForVoxel(x, y, z);
-    if (!cell) {  // 존재하지 않는 cell의 복셀을 추가
+    if (!cell) {  // cell이 존재하지 않으면 추가
       cell = this.addCellForVoxel(x, y, z);
     }
     const voxelOffset = this.computeVoxelOffset(x, y, z);
@@ -50,8 +50,6 @@ class VoxelWorld {
   }
   //복셀 추가
   addCellForVoxel(x, y, z) {
-    console.log('새로운 복셀 추가');
-    console.log('현재의 height:', full_height);
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
     if (!cell) {
@@ -96,7 +94,6 @@ class VoxelWorld {
                 voxelX + dir[0],
                 voxelY + dir[1],
                 voxelZ + dir[2]);
-              //이웃한 복셀이 없으면 
               if (!neighbor || !slab_toggle) {
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
@@ -499,7 +496,6 @@ function main() {
     }
 
     light.position.set(x, 30, 25);
-    // console.log(x);
     render();
   };
 
@@ -507,13 +503,6 @@ function main() {
   light.target.position.set(25, 0, 25);
   scene.add(light, light.target);
 
-  /* 빛 위치를 표시해줌 
-  const helper = new THREE.DirectionalLightHelper(light);
-  scene.add(helper);
-
-  const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
-  scene.add(cameraHelper);
-  */
 
   /* 배경에 구름 */
   function createClouds(radius, segments) {
@@ -589,7 +578,6 @@ function main() {
     render();
   }
 
-  // bring textuers
   /*  bring textuers */
   const loader = new THREE.TextureLoader();
   let texture = loader.load(src = "src/textures/texture_test.png"); //직접 지정
@@ -599,22 +587,13 @@ function main() {
   const tileSize = 1024;
   const tileTextureWidth = 16384;
   const tileTextureHeight = 4096;
-  let world;
-  console.log('world = new VoxelWorld 하기 직전 slab_toggle', slab_toggle)
-
-  world = new VoxelWorld({
+  const world = new VoxelWorld({
     cellSize,
     tileSize,
     tileTextureWidth,
     tileTextureHeight,
   });
 
-  // function randInt(min, max) {
-  //   return Math.floor(Math.random() * (max - min) + min);
-  // }
-
-  // const {positions, normals, uvs, indices} = world.generateGeometryDataForCell(0, 0, 0);
-  // const geometry = new THREE.BufferGeometry();
   const material = new THREE.MeshLambertMaterial({
     map: texture,
     side: THREE.DoubleSide,
@@ -681,19 +660,9 @@ function main() {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
         let height = 3;
-        // const height = (Math.sin(x / cellSize * Math.PI * 2) + Math.sin(z / cellSize * Math.PI * 3)) * (cellSize / 6) + (cellSize / 2);
         if (y < height) {
-          world.setVoxel(x, y, z, 1);
-          // world.setVoxel(x, y, z, 1); //마지막 숫자번째 texture 사용
-          // texture = loader.load(src="src/textures/marble_01_1k.png"); //직접 지정
+          world.setVoxel(x, y, z, 1);//1번째 texture 사용
         }
-        // else if(y==height){
-        //   // world.setVoxel(x, y, z, 1); //1번째 texture 사용
-        //   texture = loader.load(src="src/textures/brick_wall_001_1k.png"); //직접 지정
-        // }
-        // world.setVoxel(x, y, z, 1); //1번째 texture 사용
-
-
       }
     }
   }
@@ -723,8 +692,6 @@ function main() {
     }
 
     controls.update();
-    //controls.update(1);
-    //requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
   render();
@@ -812,23 +779,13 @@ function main() {
           console.log('블럭 생성시 height:', full_height);
 
           placeVoxelCount += levelWeight;
-          // console.log("placeVoxelCount:", placeVoxelCount);
           placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
           moveProgress();
           if (placeVoxelCount % 1 == 0) {
-            // userlevel += 1;
             levelup();
-
           }
         }
-
-
       }
-
-
-
-
-
     }
   }
 
@@ -843,37 +800,30 @@ function main() {
 
   function levelup() {
     userlevel += 1;
-    // console.log("user level up!! current level:", userlevel);
     level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
 
     switch (userlevel) {
       case 1:
         for (var i = 5; i <= 8; i++) {
           var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          // item.style.display = "block"; 
           item.style.visibility = "visible";
         }
         break;
       case 2:
         for (var i = 9; i <= 12; i++) {
           var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          // item.style.display = "block"; 
           item.style.visibility = "visible";
         }
         break;
       case 3:
         for (var i = 13; i <= 16; i++) {
           var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          // item.style.display = "block"; 
           item.style.visibility = "visible";
         }
         break;
       default:
         break;
     }
-
-
-
   }
 
   function moveProgress() {
