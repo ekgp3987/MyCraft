@@ -1,11 +1,4 @@
-// import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
-// import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
-// import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
-
-// await sleep(10000);
-// console.log('10초 경과');
-
-let slab_toggle = false; //true = block 1, false = slab 0.5
+let slab_toggle = true; //true = block 1, false = slab 0.5
 let full_height = 1.0;
 
 
@@ -94,21 +87,19 @@ class VoxelWorld {
                 voxelX + dir[0],
                 voxelY + dir[1],
                 voxelZ + dir[2]);
-              if (!neighbor || !slab_toggle) {
-                // this voxel has no neighbor in this direction so we need a face.
-                const ndx = positions.length / 3;
-                for (const { pos, uv } of corners) {
-                  positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
-                  normals.push(...dir);
-                  uvs.push(
-                    (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
-                    1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
-                }
-                indices.push(
-                  ndx, ndx + 1, ndx + 2,
-                  ndx + 2, ndx + 1, ndx + 3,
-                );
+              // this voxel has no neighbor in this direction so we need a face.
+              const ndx = positions.length / 3;
+              for (const { pos, uv } of corners) {
+                positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
+                normals.push(...dir);
+                uvs.push(
+                  (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
+                  1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
               }
+              indices.push(
+                ndx, ndx + 1, ndx + 2,
+                ndx + 2, ndx + 1, ndx + 3,
+              );
             }
           }
         }
@@ -277,14 +268,14 @@ VoxelWorld.faces = [
   },
 ];
 
-
+const textureNum = 16;
 function main() {
   const canvas = document.querySelector('#gl-canvas');
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
   // shadow rendering call
   renderer.shadowMap.enabled = true;
 
-  for (var i = 5; i <= 28; i++) {
+  for (var i = 5; i <= textureNum; i++) {
     var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
     item.style.visibility = "hidden";
   }
@@ -315,7 +306,7 @@ function main() {
   light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
   // shadow & shadow camera setting
   light.castShadow = true;
-  light.shadow.bias = -0.01; 
+  light.shadow.bias = -0.01;
   light.shadowDarkness = 0.5;
   light.shadowCameraNear = 2;
   light.shadowCameraFar = 80;
@@ -334,7 +325,7 @@ function main() {
   var nightbuttonpressed = 0; // 1 -> night,  0 -> daytime
 
   const slab_toggle_text = document.querySelector("#slab_toggle_text");
-  slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, height of block
+  slab_toggle_text.innerText = `${slab_toggle} height: ${full_height}`; // slab toggle, height of block
 
   document.getElementById("slab_toggle_button").onclick = function () {
 
@@ -428,31 +419,31 @@ function main() {
     }
     else if (x < 0) {
       document.body.style.setProperty("--upper-bg-color", '#FF99FF');
-      document.body.style.setProperty("--down-bg-color", '#0066FF'); 
+      document.body.style.setProperty("--down-bg-color", '#0066FF');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xFFAAAA);
     }
     else if (x < 10) {
-      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  
-      document.body.style.setProperty("--down-bg-color", '#3399FF');  
+      document.body.style.setProperty("--upper-bg-color", '#CC99FF');
+      document.body.style.setProperty("--down-bg-color", '#3399FF');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xAAAAFF);
     }
     else if (x < 40) {
-      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   
-      document.body.style.setProperty("--down-bg-color", '#66CCFF');   
+      document.body.style.setProperty("--upper-bg-color", '#99CCFF');
+      document.body.style.setProperty("--down-bg-color", '#66CCFF');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xFFFFFF);
     }
     else if (x < 50) {
-      document.body.style.setProperty("--upper-bg-color", '#FF9966');  
-      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     
+      document.body.style.setProperty("--upper-bg-color", '#FF9966');
+      document.body.style.setProperty("--down-bg-color", '#FFCCFF');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
@@ -460,8 +451,8 @@ function main() {
 
     }
     else if (x < 60) {
-      document.body.style.setProperty("--upper-bg-color", '#FF9933'); 
-      document.body.style.setProperty("--down-bg-color", 'pink');   
+      document.body.style.setProperty("--upper-bg-color", '#FF9933');
+      document.body.style.setProperty("--down-bg-color", 'pink');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
@@ -469,7 +460,7 @@ function main() {
     }
     else if (x < 76) {
       document.body.style.setProperty("--upper-bg-color", '#FF6600');
-      document.body.style.setProperty("--down-bg-color", '#FFFF99');  
+      document.body.style.setProperty("--down-bg-color", '#FFFF99');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
@@ -561,12 +552,12 @@ function main() {
 
   /*  bring textuers */
   const loader = new THREE.TextureLoader();
-  let texture = loader.load(src = "src/textures/texture_test.png");
+  let texture = loader.load(src = "src/textures/my-craft-texture-16.png");
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
   const tileSize = 1024;
-  const tileTextureWidth = 16384;
+  const tileTextureWidth = 1024 * textureNum;
   const tileTextureHeight = 4096;
   const world = new VoxelWorld({
     cellSize,
@@ -716,7 +707,7 @@ function main() {
   function placeVoxel(event) {
     const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width) * 2 - 1;
-    const y = (pos.y / canvas.height) * -2 + 1; 
+    const y = (pos.y / canvas.height) * -2 + 1;
 
     const start = new THREE.Vector3();
     const end = new THREE.Vector3();
@@ -754,9 +745,6 @@ function main() {
 
         // level
         if (voxelId != 0) { // If user create voxel
-
-          console.log('블럭 생성시 height:', full_height);
-
           placeVoxelCount += levelWeight;
           placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1));
           moveProgress();
@@ -799,24 +787,6 @@ function main() {
           var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
           item.style.visibility = "visible";
         }
-        break;
-      case 4:
-        for (var i = 17; i <= 20; i++) {
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          item.style.visibility = "visible";
-        }
-        break;
-      case 5:
-        for (var i = 21; i <= 24; i++) {
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          item.style.visibility = "visible";
-        }
-        break;
-      case 6:
-        for (var i = 25; i <= 28; i++) {
-          var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-          item.style.visibility = "visible";
-        };
         break;
       default:
         break;

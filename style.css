@@ -51,7 +51,7 @@ body {
 
 #ui input[type="radio"] + label {
   position: relative;
-  background-image: url("src/textures/my-texture2.png");
+  background-image: url("src/textures/my-craft-texture-16.png");
   background-size: 1600% 400%;
   image-rendering: pixelated;
   margin-bottom: 5px;
