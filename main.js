@@ -5,11 +5,11 @@
 // await sleep(10000);
 // console.log('10초 경과');
 
-let slab_toggle = false; //true = 전체블럭 1, false = 반블럭 0.5
+let slab_toggle = false; //true = block 1, false = slab 0.5
 let full_height = 1.0;
 
 
-/* 전체블럭 */
+/* The entire block */
 class VoxelWorld {
   constructor(options) {
     this.cellSize = options.cellSize;
@@ -29,7 +29,7 @@ class VoxelWorld {
       voxelZ * cellSize +
       voxelX;
   }
-  // 각 셀의 id 정하기 - 각 cell의 위치값을 쉼표로 분할한 문자열. ex: '1,0,0'
+  // Decide the ID of each cell
   computeCellId(x, y, z) {
     const { cellSize } = this;
     const cellX = Math.floor(x / cellSize);
@@ -42,13 +42,13 @@ class VoxelWorld {
   }
   setVoxel(x, y, z, v) {
     let cell = this.getCellForVoxel(x, y, z);
-    if (!cell) {  // cell이 존재하지 않으면 추가
+    if (!cell) {  // Add a voxel of a cell that doesn't exist
       cell = this.addCellForVoxel(x, y, z);
     }
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
   }
-  //복셀 추가
+  //Add a voxel
   addCellForVoxel(x, y, z) {
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
@@ -286,11 +286,10 @@ function main() {
 
   for (var i = 5; i <= 16; i++) {
     var item = document.querySelector('#ui .tiles input[type=radio][id=voxel' + i + ']+ label');
-    // item.style.display = "none";  // 커서까지 없어짐
     item.style.visibility = "hidden";
   }
 
-  const cellSize = 50; //50*50*50 크기의 영역을 만들어 안에 요소가 있는 영역만 렌더링
+  const cellSize = 50; //Area of size 50×50×50
 
   const fov = 45;
   const aspect = 2;  // the canvas default
@@ -298,25 +297,25 @@ function main() {
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-  camera.position.set(20, 10, 20);//카메라 시작 좌표
+  camera.position.set(20, 10, 20);//The starting coordinates of the camera
   const controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(20, 10, 40); //orbit control target 좌표
+  controls.target.set(20, 10, 40); //orbit control target
   controls.update();
 
 
   const scene = new THREE.Scene();
   renderer.setClearColor(0x000000, 0); // the default
 
-  /* AmbientLight 자연광 */
+  /* AmbientLight */
   const color = 0xFFFFFF;
   var ambientlight = new THREE.AmbientLight(color, 0.7);
   scene.add(ambientlight);
 
-  /* DirectionalLight 태양 */
+  /* DirectionalLight */
   light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
   // shadow & shadow camera setting
   light.castShadow = true;
-  light.shadow.bias = -0.01;  // 줄무늬 안생기게
+  light.shadow.bias = -0.01; 
   light.shadowDarkness = 0.5;
   light.shadowCameraNear = 2;
   light.shadowCameraFar = 80;
@@ -325,26 +324,19 @@ function main() {
   light.shadowCameraTop = 30;
   light.shadowCameraBottom = -30;
 
-  // 빛의 시작 지점
+  //  The starting point of the light
   var x = 0;
 
   light.position.set(-25, 30, 25);
 
-  /* time slider 관련 코드 */
+  /* time slider  */
 
-  var nightbuttonpressed = 0; // 한번 눌렸을때는 1 -> 밤이 됨, 두번 눌렸을때는 0 -> 낮이됨
+  var nightbuttonpressed = 0; // 1 -> night,  0 -> daytime
 
   const slab_toggle_text = document.querySelector("#slab_toggle_text");
-  slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, 블럭 높이 표시
+  slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, height of block
 
   document.getElementById("slab_toggle_button").onclick = function () {
-
-    //     let slab_toggle = true; //true = 전체블럭, false = 반블럭
-    // let full_height = 1;
-
-    // if (slab_toggle) full_height = 1;
-    // else full_height = 0.5;
-
 
     slab_toggle = !slab_toggle;
     console.log('slab_toggle:', slab_toggle);
@@ -416,7 +408,7 @@ function main() {
       },
     ];
 
-    slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, 블럭 높이 표시
+    slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, height of block
 
     render();
     // requestAnimationFrame(render);
@@ -425,6 +417,7 @@ function main() {
   document.getElementById("timeslider").onchange = function () {
     x = event.srcElement.value;
 
+    // color of sky
     if (x < -10) {
       document.body.style.setProperty("--upper-bg-color", 'pink'); // default
       document.body.style.setProperty("--down-bg-color", 'blue');
@@ -434,32 +427,32 @@ function main() {
         light.color.setHex(0xFFAAAA);
     }
     else if (x < 0) {
-      document.body.style.setProperty("--upper-bg-color", '#FF99FF'); // 연한 핑크
-      document.body.style.setProperty("--down-bg-color", '#0066FF');  // 연한 파랑
+      document.body.style.setProperty("--upper-bg-color", '#FF99FF');
+      document.body.style.setProperty("--down-bg-color", '#0066FF'); 
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xFFAAAA);
     }
     else if (x < 10) {
-      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  // 더 연한 파랑
-      document.body.style.setProperty("--down-bg-color", '#3399FF');   // 더 연한 핑크
+      document.body.style.setProperty("--upper-bg-color", '#CC99FF');  
+      document.body.style.setProperty("--down-bg-color", '#3399FF');  
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xAAAAFF);
     }
     else if (x < 40) {
-      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   // 파랑
-      document.body.style.setProperty("--down-bg-color", '#66CCFF');    // 파랑
+      document.body.style.setProperty("--upper-bg-color", '#99CCFF');   
+      document.body.style.setProperty("--down-bg-color", '#66CCFF');   
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0xFFFFFF);
     }
     else if (x < 50) {
-      document.body.style.setProperty("--upper-bg-color", '#FF9966');   // 자몽
-      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     // 희미한 파랑
+      document.body.style.setProperty("--upper-bg-color", '#FF9966');  
+      document.body.style.setProperty("--down-bg-color", '#FFCCFF');     
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
@@ -467,16 +460,16 @@ function main() {
 
     }
     else if (x < 60) {
-      document.body.style.setProperty("--upper-bg-color", '#FF9933');  // 오렌지
-      document.body.style.setProperty("--down-bg-color", 'pink');     // 핑크
+      document.body.style.setProperty("--upper-bg-color", '#FF9933'); 
+      document.body.style.setProperty("--down-bg-color", 'pink');   
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
         light.color.setHex(0XFFCCAA);
     }
     else if (x < 76) {
-      document.body.style.setProperty("--upper-bg-color", '#FF6600'); // 오렌지
-      document.body.style.setProperty("--down-bg-color", '#FFFF99');  // 연노랑 
+      document.body.style.setProperty("--upper-bg-color", '#FF6600');
+      document.body.style.setProperty("--down-bg-color", '#FFFF99');  
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
       else
@@ -487,12 +480,12 @@ function main() {
     render();
   };
 
-  // 빛이 비추는 방향 target
+  // The direction of the light target
   light.target.position.set(25, 0, 25);
   scene.add(light, light.target);
 
 
-  /* 배경에 구름 */
+  /* background cloud */
   function createClouds(radius, segments) {
     // Mesh
     return new THREE.Mesh(
@@ -521,27 +514,27 @@ function main() {
     );
   }
 
-  /* clouds & 큰 구 생성 */
+  /* clouds & huge sphere */
   var clouds = createClouds(80, 64);
-  /* 구 위치 조정 */
+  /* position of sphere */
   clouds.position.set(25, 20, 30);
   scene.add(clouds);
 
-  /* stars 생성 */
+  /* stars */
   var stars = createStars(80, 64);
   stars.position.set(25, 20, 30);
 
   /* night button */
-  // nightbuttonpressed  1 -> 밤,  0 -> 낮
+  // nightbuttonpressed  1 -> night,  0 -> daytime
   document.getElementById("nightbutton").onclick = function () {
     console.log(nightbuttonpressed);
 
-    if (nightbuttonpressed)   // 밤일때는 낮으로
+    if (nightbuttonpressed)   // night to daytime
       nightbuttonpressed = 0;
-    else                      // 낮일때는 밤으로
+    else                      // daytime to night
       nightbuttonpressed = 1;
 
-    // 밤으로 바뀌었을때
+    // changed to night
     if (nightbuttonpressed) {
 
       scene.remove(clouds);
@@ -552,7 +545,7 @@ function main() {
       scene.add(ambientlight);
     }
 
-    // 낮으로 바뀌었을때 
+    // changed to daytime
     if (!nightbuttonpressed) {
 
       scene.remove(stars);
@@ -568,7 +561,7 @@ function main() {
 
   /*  bring textuers */
   const loader = new THREE.TextureLoader();
-  let texture = loader.load(src = "src/textures/texture_test.png"); //직접 지정
+  let texture = loader.load(src = "src/textures/texture_test.png");
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
@@ -612,7 +605,7 @@ function main() {
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = cellId;
       cellIdToMesh[cellId] = mesh;
-      // object위에 그림자를 드리우게 하는 것 
+      // To cast a shadow over an object
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       scene.add(mesh);
@@ -643,13 +636,13 @@ function main() {
     }
   }
 
-  // 플랫폼 생성
+  // create platform
   for (let y = 0; y < cellSize; ++y) {
     for (let z = 0; z < cellSize; ++z) {
       for (let x = 0; x < cellSize; ++x) {
         let height = 3;
         if (y < height) {
-          world.setVoxel(x, y, z, 1);//1번째 texture 사용
+          world.setVoxel(x, y, z, 1);//use first texture
         }
       }
     }
@@ -715,7 +708,7 @@ function main() {
   let width = 0;
   const levelWeight = 0.1;
   const level = document.querySelector("#levelText");
-  level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+  level.innerText = `Lv. ${userlevel}`; // user level
 
 
 
@@ -723,7 +716,7 @@ function main() {
   function placeVoxel(event) {
     const pos = getCanvasRelativePosition(event);
     const x = (pos.x / canvas.width) * 2 - 1;
-    const y = (pos.y / canvas.height) * -2 + 1;  // Y축을 뒤집었음
+    const y = (pos.y / canvas.height) * -2 + 1; 
 
     const start = new THREE.Vector3();
     const end = new THREE.Vector3();
@@ -745,15 +738,13 @@ function main() {
 
       const voxelId = isRightButton ? currentVoxel : 0;
       /**
-       * 교차점은 면 위에 있습니다. 이는 수학적 오차로 인해 교차점이 면의 양면
-       * 어디로 떨어질지 모른다는 이야기죠.
-       * 그래서 복셀을 제거하는 경우(currentVoxel = 0)는 normal의 값을 반으로
-       * 줄이고, 추가하는 경우(currentVoxel > 0)에는 방향을 바꾼 뒤 반만큼 줄입니다.
+       * Reduce voxel (currentVoxel = 0)
+       * Adding voxel (currentVoxel > 0)
        **/
       const pos = intersection.position.map((v, ndx) => {
         return v + intersection.normal[ndx] * (voxelId > 0 ? 0.5 : -0.5);
       });
-      //범위 벗어나면 생성 못함
+      // If it's out of range, user can't create voxel
       if ((pos[0] > 0 && pos[0] < 50) && (pos[2] > 0 && pos[2] < 50)) {
         world.setVoxel(...pos, voxelId);
         updateVoxelGeometry(...pos);
@@ -761,13 +752,13 @@ function main() {
 
 
 
-        // 레벨 관련 부분
-        if (voxelId != 0) { // 블럭 생성시만
+        // level
+        if (voxelId != 0) { // If user create voxel
 
           console.log('블럭 생성시 height:', full_height);
 
           placeVoxelCount += levelWeight;
-          placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1)); //소수점 아래 한자리로 고정
+          placeVoxelCount = parseFloat(placeVoxelCount.toFixed(1));
           moveProgress();
           if (placeVoxelCount % 1 == 0) {
             levelup();
@@ -788,7 +779,7 @@ function main() {
 
   function levelup() {
     userlevel += 1;
-    level.innerText = `Lv. ${userlevel}`; // 유저 레벨 표시
+    level.innerText = `Lv. ${userlevel}`; // user level
 
     switch (userlevel) {
       case 1:
