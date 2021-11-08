@@ -297,23 +297,11 @@ function main() {
   const near = 0.1;
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  //camera.position.set(-cellSize * .3, cellSize * .1, -cellSize * .3);
 
   camera.position.set(20, 10, 20);//카메라 시작 좌표
-  //orbitcontrol
   const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(20, 10, 40); //orbit control target 좌표
-  //controls.target.set(cellSize / 2, cellSize / 3, cellSize / 2);
   controls.update();
-
-
-  /*camera.position.set(25, 15, 80);//시작 좌표
-  const controls = new THREE.FlyControls(camera, canvas);
-  controls.movementSpeed = 0.1;
-  controls.autoForward = false;
-  controls.dragToLook = true;
-  controls.update(1);
-*/
 
 
   const scene = new THREE.Scene();
