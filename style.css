@@ -89,6 +89,7 @@ body {
   margin: 10%;
 }
 
+#slab_toggle_text,
 #levelText {
   font-size: 4vh;
   color: white;
