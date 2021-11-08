@@ -96,7 +96,8 @@ class VoxelWorld {
                 voxelX + dir[0],
                 voxelY + dir[1],
                 voxelZ + dir[2]);
-              if (!neighbor) {
+              //이웃한 복셀이 없으면 
+              if (!neighbor || !slab_toggle) {
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
                 for (const { pos, uv } of corners) {
@@ -600,14 +601,14 @@ function main() {
   const tileTextureHeight = 4096;
   let world;
   console.log('world = new VoxelWorld 하기 직전 slab_toggle', slab_toggle)
-  
-    world = new VoxelWorld({
-      cellSize,
-      tileSize,
-      tileTextureWidth,
-      tileTextureHeight,
-    });
-  
+
+  world = new VoxelWorld({
+    cellSize,
+    tileSize,
+    tileTextureWidth,
+    tileTextureHeight,
+  });
+
   // function randInt(min, max) {
   //   return Math.floor(Math.random() * (max - min) + min);
   // }
