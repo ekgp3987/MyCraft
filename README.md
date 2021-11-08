@@ -47,8 +47,7 @@ we would like to create an architectural version of a mini-Minecraft that allows
  
   | Level & texture | code |
   |------------------|-----------------------------------------------------------------------------------------------------------|
-  |![5](https://user-images.githubusercontent.com/57945707/140738935-886adb6b-f46a-4be7-8ba6-4746f9bdb65a.png) |![9](https://user-images.githubusercontent.com/57945707/140738978-f0d02f62-f91b-4797-a467-89e91425da42.png) ![10](https://user-images.githubusercontent.com/57945707/140739073-b6545bed-e50d-49be-85e2-4b4eba24401c.png)
-|
+  |![5](https://user-images.githubusercontent.com/57945707/140738935-886adb6b-f46a-4be7-8ba6-4746f9bdb65a.png) |![9](https://user-images.githubusercontent.com/57945707/140738978-f0d02f62-f91b-4797-a467-89e91425da42.png) ![10](https://user-images.githubusercontent.com/57945707/140739073-b6545bed-e50d-49be-85e2-4b4eba24401c.png)|
  <br>
  If you want the entire code, please refer to the out Github Source code
 
@@ -56,10 +55,10 @@ we would like to create an architectural version of a mini-Minecraft that allows
  # 4. Roles
    | Name  | Role |
   |------------------|-----------------------------------------------------------------------------------------------------------|
-  | 김다혜 | -Final PPt, camera setting, wiki maintenance, final presentation|
-  | 노민하 | -Final PPt, level systems, texture mapping, proposal presentation|
-  | 안현영 | -Final PPt, light source, background setting, time control system|
-  | 오예진 | -Final PPt, level systems, user inventory, user interaction|
+  | 김다혜 | -Final PPT, camera setting, wiki maintenance, final presentation|
+  | 노민하 | -Final PPT, level systems, texture mapping, proposal presentation|
+  | 안현영 | -Final PPT, light source, background setting, time control system|
+  | 오예진 | -Final PPT, level systems, user inventory, user interaction|
   
 ***
  # 5. Reference
