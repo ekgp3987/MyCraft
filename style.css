@@ -89,7 +89,6 @@ body {
   margin: 10%;
 }
 
-#slab_toggle_text,
 #levelText {
   font-size: 4vh;
   color: white;
@@ -121,8 +120,9 @@ body {
   margin: 10%;
 }
 
+#slab_toggle_text,
 #timeText {
   padding: 4%;
-  font-size: 4vh;
+  font-size: 2vh;
   color: white;
 }

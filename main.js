@@ -5,26 +5,11 @@
 // await sleep(10000);
 // console.log('10초 경과');
 
-let slab_toggle = true; //true = 전체블럭, false = 반블럭
+let slab_toggle = false; //true = 전체블럭 1, false = 반블럭 0.5
 let full_height = 0.5;
 
-// if (slab_toggle) full_height = 1;
-// else full_height = 0.5;
 
-// //추가.
-// const _keydown = this.keydown.bind( this );
-// window.addEventListener( 'keydown', _keydown );
-
-// this.keydown = function ( event ) {
-//   switch ( event.code ) {
-//   case 'KeyT':
-//       slab_toggle  = !slab_toggle;
-//       console.log('slab_toggle:',slab_toggle);
-// 			break;
-//   }
-// }
-
-
+/* 전체블럭 */
 class VoxelWorld {
   constructor(options) {
     this.cellSize = options.cellSize;
@@ -385,21 +370,21 @@ class VoxelWorld_slab {
                 voxelX + dir[0],
                 voxelY + dir[1],
                 voxelZ + dir[2]);
-              if (!neighbor) {
-                // this voxel has no neighbor in this direction so we need a face.
-                const ndx = positions.length / 3;
-                for (const { pos, uv } of corners) {
-                  positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
-                  normals.push(...dir);
-                  uvs.push(
-                    (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
-                    1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
-                }
-                indices.push(
-                  ndx, ndx + 1, ndx + 2,
-                  ndx + 2, ndx + 1, ndx + 3,
-                );
+
+              // this voxel has no neighbor in this direction so we need a face.
+              const ndx = positions.length / 3;
+              for (const { pos, uv } of corners) {
+                positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
+                normals.push(...dir);
+                uvs.push(
+                  (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
+                  1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
               }
+              indices.push(
+                ndx, ndx + 1, ndx + 2,
+                ndx + 2, ndx + 1, ndx + 3,
+              );
+
             }
           }
         }
@@ -580,7 +565,7 @@ function main() {
     item.style.visibility = "hidden";
   }
 
-  const cellSize = 50;
+  const cellSize = 50; //50*50*50 크기의 영역을 만들어 안에 요소가 있는 영역만 렌더링
 
   const fov = 45;
   const aspect = 2;  // the canvas default
@@ -656,8 +641,8 @@ function main() {
 
     slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, 블럭 높이 표시
 
-    // render();
-    requestAnimationFrame(render);
+    render();
+    // requestAnimationFrame(render);
   }
 
   document.getElementById("timeslider").onchange = function () {
@@ -824,7 +809,7 @@ function main() {
   const tileTextureHeight = 4096;
   let world;
   console.log('world = new VoxelWorld 하기 직전 slab_toggle', slab_toggle)
-  if (slab_toggle) {
+  if (full_height == 1) {
     world = new VoxelWorld({
       cellSize,
       tileSize,
