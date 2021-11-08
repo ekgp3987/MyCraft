@@ -210,9 +210,9 @@ VoxelWorld.faces = [
     uvRow: 0,
     dir: [-1, 0, 0,],
     corners: [
-      { pos: [0, full_height, 0], uv: [0, 0.5], },
+      { pos: [0, full_height, 0], uv: [0, 1], },
       { pos: [0, 0, 0], uv: [0, 0], },
-      { pos: [0, full_height, 1], uv: [1, 0.5], },
+      { pos: [0, full_height, 1], uv: [1, 1], },
       { pos: [0, 0, 1], uv: [1, 0], },
     ],
   },
