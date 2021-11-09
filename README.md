@@ -1,6 +1,9 @@
 ## Computer Graphics Term Project - MyCraft
 
-(youtube URL 첨부 예정)
+
+***
+# Youtube link
+* ### [Computer Graphics Project final presentation(Youtube) - Mycraft](https://youtu.be/Jls8NnpTeLw)
 
 ***
   Contents <br>
