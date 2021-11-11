@@ -271,8 +271,8 @@ VoxelWorld.faces = [
 const textureNum = 16;
 function main() {
   const canvas = document.querySelector('#gl-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-  // shadow rendering call
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });  // alpha: threejs transparent background
+  // call shadow rendering in renderer
   renderer.shadowMap.enabled = true;
 
   for (var i = 5; i <= textureNum; i++) {
@@ -311,10 +311,12 @@ function main() {
 
   /* DirectionalLight */
   light = new THREE.DirectionalLight(0xFFAAAA, 0.5);
-  // shadow & shadow camera setting
+  // add shadow to directional light 
   light.castShadow = true;
+  // additional option for shadow
   light.shadow.bias = -0.01;
   light.shadowDarkness = 0.5;
+  // shadow camera setting
   light.shadowCameraNear = 2;
   light.shadowCameraFar = 80;
   light.shadowCameraLeft = -30;
@@ -322,13 +324,10 @@ function main() {
   light.shadowCameraTop = 30;
   light.shadowCameraBottom = -30;
 
-  //  The starting point of the light
-  var x = 0;
-
+  // initial setting of directional light position
   light.position.set(-25, 30, 25);
 
-  /* time slider  */
-
+  // flag on night buttion
   var nightbuttonpressed = 0; // 1 -> night,  0 -> daytime
 
   const slab_toggle_text = document.querySelector("#slab_toggle_text");
@@ -412,12 +411,14 @@ function main() {
     // requestAnimationFrame(render);
   }
 
+  /* time slider */
+  var x = 0;
   document.getElementById("timeslider").onchange = function () {
     x = event.srcElement.value;
 
-    // color of sky
+    // depending on x value, get background color & directional light color & directional light position
     if (x < -10) {
-      document.body.style.setProperty("--upper-bg-color", 'pink'); // default
+      document.body.style.setProperty("--upper-bg-color", 'pink');  // setProperty of CSS background attribute
       document.body.style.setProperty("--down-bg-color", 'blue');
       if (nightbuttonpressed)
         light.color.setHex(0xFFFFFF);
@@ -474,14 +475,15 @@ function main() {
         light.color.setHex(0XFFCCAA);
     }
 
+    // set light position
     light.position.set(x, 30, 25);
+
     render();
   };
 
-  // The direction of the light target
+  // The direction of the light target (same target)
   light.target.position.set(25, 0, 25);
   scene.add(light, light.target);
-
 
   /* background cloud */
   function createClouds(radius, segments) {
@@ -498,7 +500,7 @@ function main() {
     );
   }
 
-  /* Create stars */
+  /* background stars */
   function createStars(radius, segments) {
     // Mesh
     return new THREE.Mesh(
@@ -512,20 +514,20 @@ function main() {
     );
   }
 
-  /* clouds & huge sphere */
+  // add clouds with huge sphere 
   var clouds = createClouds(80, 64);
-  /* position of sphere */
+  // position of sphere 
   clouds.position.set(25, 20, 30);
   scene.add(clouds);
 
-  /* stars */
+  // add stars 
   var stars = createStars(80, 64);
   stars.position.set(25, 20, 30);
 
   /* night button */
   // nightbuttonpressed  1 -> night,  0 -> daytime
   document.getElementById("nightbutton").onclick = function () {
-    console.log(nightbuttonpressed);
+    // console.log(nightbuttonpressed);
 
     if (nightbuttonpressed)   // night to daytime
       nightbuttonpressed = 0;
@@ -538,6 +540,7 @@ function main() {
       scene.remove(clouds);
       scene.add(stars);
 
+      // down the intensity of ambient light
       ambientlight.intensity = 0.2;
 
       scene.add(ambientlight);
