@@ -282,18 +282,25 @@ function main() {
 
   const cellSize = 50; //Area of size 50×50×50
 
+
+  /* Camera */
   const fov = 45;
   const aspect = 2;  // the canvas default
   const near = 0.1;
   const far = 1000;
+
+  //Perspective Camera
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-  camera.position.set(20, 10, 20);//The starting coordinates of the camera
-  const controls = new THREE.OrbitControls(camera, canvas);
-  controls.target.set(20, 10, 40); //orbit control target
-  controls.update();
+  //The starting coordinates of the camera
+  camera.position.set(20, 10, 20); 
 
+  //controls : OrbitCamera control in Threejs
+  const controls = new THREE.OrbitControls(camera, canvas); 
+  controls.target.set(20, 10, 40); //orbit control target(platform)
+  controls.update(); 
 
+  /* Scene */
   const scene = new THREE.Scene();
   renderer.setClearColor(0x000000, 0); // the default
 
