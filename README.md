@@ -52,7 +52,7 @@ we would like to create an architectural version of a mini-Minecraft that allows
   |------------------|-----------------------------------------------------------------------------------------------------------|
   |![5](https://user-images.githubusercontent.com/57945707/140738935-886adb6b-f46a-4be7-8ba6-4746f9bdb65a.png) |![9](https://user-images.githubusercontent.com/57945707/140738978-f0d02f62-f91b-4797-a467-89e91425da42.png) ![10](https://user-images.githubusercontent.com/57945707/140739073-b6545bed-e50d-49be-85e2-4b4eba24401c.png)|
  <br>
- If you want the entire code, please refer to the out Github Source code
+ If you want the entire code, please refer to the our Github Source code
 
 ***
  # 4. Roles
