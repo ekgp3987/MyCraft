@@ -41,7 +41,7 @@ class VoxelWorld {
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
   }
-  //Add a voxel
+  //Add a new cell(50*50) for the voxel
   addCellForVoxel(x, y, z) {
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
@@ -52,6 +52,8 @@ class VoxelWorld {
     }
     return cell;
   }
+
+  // return the offset of the cell so find the correct voxel position
   getVoxel(x, y, z) {
     const cell = this.getCellForVoxel(x, y, z);
     if (!cell) {
@@ -80,14 +82,8 @@ class VoxelWorld {
           if (voxel) {
             // voxel 0 is sky (empty) so for UVs we start at 0
             const uvVoxel = voxel - 1;
-            // There is a voxel here but do we need faces for it?
-
             for (const { dir, corners, uvRow } of VoxelWorld.faces) {
-              const neighbor = this.getVoxel(
-                voxelX + dir[0],
-                voxelY + dir[1],
-                voxelZ + dir[2]);
-              // this voxel has no neighbor in this direction so we need a face.
+              // make faces
               const ndx = positions.length / 3;
               for (const { pos, uv } of corners) {
                 positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
@@ -115,9 +111,8 @@ class VoxelWorld {
 
 
 
-
-  //
-
+  /* create a voxel by user click */
+  // return the position of intersection and the normal of the face hit
   intersectRay(start, end) {
     let dx = end.x - start.x;
     let dy = end.y - start.y;
@@ -268,6 +263,7 @@ VoxelWorld.faces = [
   },
 ];
 
+/* texture ui(inventory) */
 const textureNum = 16;
 function main() {
   const canvas = document.querySelector('#gl-canvas');
@@ -293,12 +289,12 @@ function main() {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
   //The starting coordinates of the camera
-  camera.position.set(20, 10, 20); 
+  camera.position.set(20, 10, 20);
 
   //controls : OrbitCamera control in Threejs
-  const controls = new THREE.OrbitControls(camera, canvas); 
+  const controls = new THREE.OrbitControls(camera, canvas);
   controls.target.set(20, 10, 40); //orbit control target(platform)
-  controls.update(); 
+  controls.update();
 
   /* Scene */
   const scene = new THREE.Scene();
@@ -330,17 +326,17 @@ function main() {
   // flag on night buttion
   var nightbuttonpressed = 0; // 1 -> night,  0 -> daytime
 
+  /* for the slab voxel */
   const slab_toggle_text = document.querySelector("#slab_toggle_text");
   slab_toggle_text.innerText = `${slab_toggle} height: ${full_height}`; // slab toggle, height of block
-
   document.getElementById("slab_toggle_button").onclick = function () {
-
     slab_toggle = !slab_toggle;
     console.log('slab_toggle:', slab_toggle);
 
     if (slab_toggle) full_height = 1;
     else full_height = 0.5;
 
+    // draw all voxel again with new height
     VoxelWorld.faces = [
 
       { // left
@@ -406,9 +402,7 @@ function main() {
     ];
 
     slab_toggle_text.innerText = `${slab_toggle} hegiht: ${full_height}`; // slab toggle, height of block
-
     render();
-    // requestAnimationFrame(render);
   }
 
   /* time slider */
@@ -566,9 +560,10 @@ function main() {
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
 
-  const tileSize = 1024;
-  const tileTextureWidth = 1024 * textureNum;
-  const tileTextureHeight = 4096;
+  // control textures on the texture atlas
+  const tileSize = 1024; // texture size
+  const tileTextureWidth = 1024 * textureNum; // texture atlas width
+  const tileTextureHeight = 4096; // texture atlas height
   const world = new VoxelWorld({
     cellSize,
     tileSize,
@@ -584,12 +579,13 @@ function main() {
   });
 
   const cellIdToMesh = {};
+  // generating the geometry for one cell and make it handle
   function updateCellGeometry(x, y, z) {
     const cellX = Math.floor(x / cellSize);
     const cellY = Math.floor(y / cellSize);
     const cellZ = Math.floor(z / cellSize);
     const cellId = world.computeCellId(x, y, z);
-    let mesh = cellIdToMesh[cellId];
+    let mesh = cellIdToMesh[cellId]; // check mesh with index map and cell id
     const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
 
     const { positions, normals, uvs, indices } = world.generateGeometryDataForCell(cellX, cellY, cellZ);
@@ -623,6 +619,7 @@ function main() {
     [0, 0, -1], // back
     [0, 0, 1], // front
   ];
+  // update voxel geometry with the cell info
   function updateVoxelGeometry(x, y, z) {
     const updatedCellIds = {};
     for (const offset of neighborOffsets) {
@@ -651,6 +648,7 @@ function main() {
 
   updateVoxelGeometry(0, 0, 0);  // 0,0,0 will generate
 
+  // display resize
   function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
     const width = canvas.clientWidth;
@@ -767,12 +765,10 @@ function main() {
   }
 
 
-
   const mouse = {
     x: 0,
     y: 0,
   };
-
 
 
   function levelup() {
@@ -803,9 +799,9 @@ function main() {
     }
   }
 
+  // user level ui bar
   function moveProgress() {
     const ele = document.getElementById('progsNum');
-
 
     if (width >= 90) {
       width = 0;
